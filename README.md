@@ -12,3 +12,6 @@ Implementation of YOLOv3 using OpenCV - C++ library and Darknet - C Framework fo
 - VS2019 Community: https://visualstudio.microsoft.com/
 - https://www.opencv-srf.com/2017/11/install-opencv-with-visual-studio.html
 
+# Dataset link:
+- SPIRODOUME: https://sites.uclouvain.be/ispgroup/Softwares/SPIROUDOME
+- APIDIS: https://sites.uclouvain.be/ispgroup/Softwares/APIDIS
