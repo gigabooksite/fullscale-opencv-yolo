@@ -17,10 +17,14 @@ void onMouseClickFrame(int event, int x, int y, int flags, void* param);
 
 int main(int argc, char** argv)
 {
-	string	frameFile = "frame.png",
+	string	camSettingsFile = "cam1_data.xml",
+			frameFile = "frame.jpg",
 			courtFile = "court.png",
 			videoFile = "video.png";
+	Mat intrinsics, distortion, undistortedFrame;
 
+	// These points were manually found by impementing a click handler on the window and outputing
+	// the x,y position on the console using cout
 	vector<Point2f>	framePoints{ 
 						Point2f(454,388),
 						Point2f(769,407),
@@ -87,52 +91,60 @@ int main(int argc, char** argv)
 
 	Mat frame = imread(frameFile);
 	Mat court = imread(courtFile);
-
-
+	FileStorage fs(camSettingsFile, FileStorage::READ);
+	fs["camera_matrix"] >> intrinsics;
+	fs["distortion_coefficients"] >> distortion;
+	
 	namedWindow(kWinName);
 	setMouseCallback(kWinName, onMouseClickFrame, (void*)& sourcePoint);
-
 
 	if (frame.empty() || court.empty()) {
 		cout << "Error reading image";
 		return 0;
 	}
+
+	undistort(frame, undistortedFrame, intrinsics, distortion);
+
+	Mat resized;
+	cv::resize(undistortedFrame, resized, Size(800, 600));
+	imshow(kWinName, resized);
+	imshow("distorted", frame);
+	waitKey();
 	
-	//totalAvgErr = calibrateCamera(framePoints, courtPoints, Size(frame.cols, frame.rows), cameraMatrix, distCoeffs, rvecs, tvecs, CALIB_USE_INTRINSIC_GUESS);
-	Mat homography = findHomography(framePoints, courtPoints, RANSAC);
-	
-	//vector<vector<Point2f>> contours{ framePoints };
-	//drawContours(frame, contours, 0, Scalar(255), 1, LINE_8);
-	while (1) {
-		
-			//cout << "Current mouse point = " << sourcePoint.x << "," << sourcePoint.y << endl;
-			vector<Point2f> srcVecP{ sourcePoint };
-			vector<Point2f> courtVecP{ courtPoint };
-			perspectiveTransform(srcVecP, courtVecP, homography);
+	//Mat homography = findHomography(framePoints, courtPoints, RANSAC);
+	//
+	//while (1) {
+	//	
+	//		//cout << "Current mouse point = " << sourcePoint.x << "," << sourcePoint.y << endl;
+	//		vector<Point2f> srcVecP{ sourcePoint };
+	//		vector<Point2f> courtVecP{ courtPoint };
+	//		perspectiveTransform(srcVecP, courtVecP, homography);
 
-			courtPoint = courtVecP[0];
+	//		courtPoint = courtVecP[0];
 
-			Mat courtClone = court.clone();
-			circle(courtClone, courtPoint, 3, Scalar(255), 1, LINE_8);
+	//		Mat courtClone = court.clone();
+	//		circle(courtClone, courtPoint, 3, Scalar(255), 1, LINE_8);
 
-		imshow(kWinName, frame);
-		imshow("Court", courtClone);
+	//	imshow(kWinName, frame);
+	//	imshow("Court", courtClone);
 
-		char key = (char)waitKey(30);
-		if (key == 'q' || key == 27)
-		{
-			break;
-		}
-	}
+	//	char key = (char)waitKey(30);
+	//	if (key == 'q' || key == 27)
+	//	{
+	//		break;
+	//	}
+	// }
 	return 0;
 }
 
 void onMouseClickFrame(int event, int x, int y, int flags, void* param)
 {
+	// Capture the point coordinates, for now we will do it manually instead of feature-detection
 	if (event == EVENT_FLAG_LBUTTON) {
 		cout << "Point " << x << "," << y << " captured" << endl;
 	}
 
+	// Map where the mouse is hovering on the video frame to a separate "flat court" picture
 	if (event == MouseEventTypes::EVENT_MOUSEMOVE)
 	{
 		Point2f* sourcePoint = (Point2f*) param;
