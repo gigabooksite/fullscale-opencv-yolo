@@ -33,7 +33,7 @@
     <ClCompile Include="..\ObjectDetectionBasketballGame\YOLO.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\ObjectDetectionBasketballGame\Common.cpp">
+    <ClCompile Include="Common.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -53,7 +53,7 @@
     <ClInclude Include="..\ObjectDetectionBasketballGame\CourtDetect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\ObjectDetectionBasketballGame\Common.h">
+    <ClInclude Include="Common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
