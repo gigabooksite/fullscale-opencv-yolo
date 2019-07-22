@@ -26,6 +26,7 @@
     <ClCompile Include="..\ObjectDetectionBasketballGame\VWriter.cpp" />
     <ClCompile Include="..\ObjectDetectionBasketballGame\YOLO.cpp" />
     <ClCompile Include="Common.cpp" />
+    <ClCompile Include="TeamClassifier.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\ObjectDetectionBasketballGame\CourtDetect.h" />
@@ -34,6 +35,7 @@
     <ClInclude Include="..\ObjectDetectionBasketballGame\VReader.h" />
     <ClInclude Include="..\ObjectDetectionBasketballGame\VWriter.h" />
     <ClInclude Include="Common.h" />
+    <ClInclude Include="TeamClassifier.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
