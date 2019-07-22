@@ -5,6 +5,7 @@
 #include <opencv2/dnn/dnn.hpp>
 
 #include "MatQueue.h"
+#include "CourtDetect.h"
 
 class VProcessor
 {
@@ -31,6 +32,8 @@ private:
 	static const cv::String m_modelConfiguration;
 	static const cv::String m_modelWeights;
 	static const std::string m_classesFile;
+
+	CourtDetect courtDetect;
 };
 
 #endif

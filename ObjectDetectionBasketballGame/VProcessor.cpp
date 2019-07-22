@@ -26,9 +26,25 @@ const cv::String VProcessor::m_modelWeights = "mobilenetSSD/deploy.caffemodel";
 const std::string VProcessor::m_classesFile = "mobilenetSSD/classes.txt";
 #endif
 
+std::vector<cv::Point2f>
+framePoints{ cv::Point2f(56,782),
+			cv::Point2f(615,442),
+			cv::Point2f(1455,491),
+			cv::Point2f(1409,1104),
+};
+
+std::vector<cv::Point2f>
+courtPoints{cv::Point2f(28,	332),
+			cv::Point2f(28,30),
+			cv::Point2f(319,30),
+			cv::Point2f(319,336),
+
+};
+
 VProcessor::VProcessor(MatQueue& in, MatQueue& out) :
 	_inFrames(in),
-	_outFrames(out)
+	_outFrames(out),
+	courtDetect("MyCourtDetection")
 {
 	cv::RNG rng(12345);
 
@@ -45,6 +61,10 @@ VProcessor::VProcessor(MatQueue& in, MatQueue& out) :
 
 	_net.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
 	_net.setPreferableTarget(cv::dnn::DNN_TARGET_CPU);
+
+	courtDetect.setFramePoints(framePoints);
+	courtDetect.setCourtPoints(courtPoints);
+	courtDetect.setCourt("courtdetect/court.png");
 }
 
 
@@ -173,12 +193,22 @@ void VProcessor::postprocess(cv::Mat& frame, const std::vector<cv::Mat>& outs, c
 	// lower confidences
 	std::vector<int> indices;
 	cv::dnn::NMSBoxes(boxes, confidences, m_confThreshold, m_nmsThreshold, indices);
+	cv::Mat courtCopy;
+	courtCopy = courtDetect.getCourt().clone();
 	for (size_t i = 0; i < indices.size(); ++i)
 	{
 		int idx = indices[i];
 		cv::Rect box = boxes[idx];
 		drawPred(classIds[idx], confidences[idx], box.x, box.y,
 			box.x + box.width, box.y + box.height, frame);
+
+		if (classIds[idx] == 1)
+		{
+			cv::Point2f position;
+			position.x = (float)box.x + (box.width / 2);
+			position.y = (float)box.y + box.height;
+			courtDetect.projectPosition(courtCopy, position);
+		}
 	}
 }
 

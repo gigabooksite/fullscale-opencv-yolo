@@ -18,7 +18,8 @@ int main(int argc, char* argv[])
 	MatQueue capture;
 	MatQueue display;
 
-	VReader reader(capture, "yolo/XWtjl9fI9pY_clip_11.mp4");
+	//VReader reader(capture, "yolo/XWtjl9fI9pY_clip_11.mp4");
+	VReader reader(capture, "courtdetect/video.mp4");
 	VProcessor processor(capture, display);
 	VWriter writer(display, "output.avi");
 
