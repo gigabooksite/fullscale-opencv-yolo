@@ -33,6 +33,9 @@
     <ClCompile Include="..\ObjectDetectionBasketballGame\YOLO.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\ObjectDetectionBasketballGame\Common.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\ObjectDetectionBasketballGame\VWriter.h">
@@ -48,6 +51,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\ObjectDetectionBasketballGame\CourtDetect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ObjectDetectionBasketballGame\Common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

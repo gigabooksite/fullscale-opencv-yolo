@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\ObjectDetectionBasketballGame\Common.cpp" />
     <ClCompile Include="..\ObjectDetectionBasketballGame\CourtDetect.cpp" />
     <ClCompile Include="..\ObjectDetectionBasketballGame\MatQueue.cpp" />
     <ClCompile Include="..\ObjectDetectionBasketballGame\VProcessor.cpp" />
@@ -27,6 +28,7 @@
     <ClCompile Include="..\ObjectDetectionBasketballGame\YOLO.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\ObjectDetectionBasketballGame\Common.h" />
     <ClInclude Include="..\ObjectDetectionBasketballGame\CourtDetect.h" />
     <ClInclude Include="..\ObjectDetectionBasketballGame\MatQueue.h" />
     <ClInclude Include="..\ObjectDetectionBasketballGame\VProcessor.h" />
