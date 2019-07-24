@@ -11,6 +11,13 @@
 #include "VProcessor.h"
 #include "VWriter.h"
 
+#ifdef _WITH_TEAMCLASSIFIER
+#include "..\TeamClassify\TeamClassifier.h"
+#else
+#include "DummyTeamClassifier.h"
+#endif
+
+using namespace TeamClassify;
 std::atomic<bool> quit = false;
 
 int main(int argc, char* argv[])
@@ -18,9 +25,16 @@ int main(int argc, char* argv[])
 	MatQueue capture;
 	MatQueue display;
 
-	//VReader reader(capture, "yolo/XWtjl9fI9pY_clip_11.mp4");
+
+#ifdef _WITH_TEAMCLASSIFIER
+	VReader reader(capture, "yolo/XWtjl9fI9pY_clip_11.mp4");	
+	TeamClassifier teamClassifier;
+#else
 	VReader reader(capture, "courtdetect/video.mp4");
-	VProcessor processor(capture, display);
+	DummyTeamClassifier teamClassifier;
+#endif
+
+	VProcessor processor(capture, display, &teamClassifier);
 	VWriter writer(display, "output.avi");
 
 	std::thread t1(reader);

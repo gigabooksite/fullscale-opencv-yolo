@@ -8,6 +8,7 @@
 #include <opencv2/core/types_c.h>
 
 extern std::atomic<bool> quit;
+using namespace TeamClassify;
 
 const int VProcessor::m_inpWidth = 288;        // Width of network's input image
 const int VProcessor::m_inpHeight = 288;       // Height of network's input image
@@ -41,9 +42,10 @@ courtPoints{cv::Point2f(28,	332),
 
 };
 
-VProcessor::VProcessor(MatQueue& in, MatQueue& out) :
+VProcessor::VProcessor(MatQueue& in, MatQueue& out, ITeamClassifier* tc) :
 	_inFrames(in),
 	_outFrames(out),
+	teamClassifier(tc),
 	courtDetect("MyCourtDetection")
 {
 	cv::RNG rng(12345);
@@ -193,6 +195,17 @@ void VProcessor::postprocess(cv::Mat& frame, const std::vector<cv::Mat>& outs, c
 	// lower confidences
 	std::vector<int> indices;
 	cv::dnn::NMSBoxes(boxes, confidences, m_confThreshold, m_nmsThreshold, indices);
+
+	// Collect parameters needed by team classifier
+	ITeamClassifier::FrameProcParams fpp;
+	fpp.frame = frame;
+	fpp.boxes = boxes;
+	fpp.indices = indices;
+	fpp.classNames = _classes;
+	fpp.classIds = classIds;
+	fpp.confidence = confidences;
+	teamClassifier->ProcessFrame(&fpp);
+
 	cv::Mat courtCopy;
 	courtCopy = courtDetect.getCourt().clone();
 	for (size_t i = 0; i < indices.size(); ++i)

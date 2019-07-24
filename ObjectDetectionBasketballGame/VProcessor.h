@@ -6,16 +6,18 @@
 
 #include "MatQueue.h"
 #include "CourtDetect.h"
+#include "ITeamClassifier.h"
 
 class VProcessor
 {
 public:
-	VProcessor(MatQueue& in, MatQueue& out);
+	VProcessor(MatQueue& in, MatQueue& out, TeamClassify::ITeamClassifier *tc);
 	~VProcessor();
 	void operator()();
 private:
 	MatQueue& _inFrames;
 	MatQueue& _outFrames;
+	TeamClassify::ITeamClassifier* teamClassifier;
 	cv::dnn::Net _net;
 	std::vector<std::string> _classes;
 	std::vector<cv::Scalar> _colors;
