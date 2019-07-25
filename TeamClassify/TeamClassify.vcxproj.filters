@@ -62,5 +62,11 @@
     <ClInclude Include="TeamClassifier.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\ObjectDetectionBasketballGame\ITeamClassifier.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ObjectDetectionBasketballGame\DummyTeamClassifier.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

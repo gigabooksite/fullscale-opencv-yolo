@@ -24,7 +24,8 @@ private:
 
 	std::vector<cv::String> getOutputsNames(const cv::dnn::Net& net);
 	void postprocess(cv::Mat& frame, const std::vector<cv::Mat>& outs, const cv::Ptr<cv::dnn::Layer> lastLayer);
-	void drawPred(int classId, float conf, int left, int top, int right, int bottom, cv::Mat& frame);
+	void drawPred(int classId, float conf, int left, int top, int right, int bottom, cv::Mat& frame, int teamIdx, int boxIdx);
+	void assignTeams(TeamClassify::ITeamClassifier::FrameProcParams &fpp, std::vector<int>& teams);
 
 	static const int m_inpWidth;
 	static const int m_inpHeight;

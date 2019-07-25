@@ -128,9 +128,11 @@ std::vector<cv::String> VProcessor::getOutputsNames(const cv::dnn::Net& net)
 
 void VProcessor::postprocess(cv::Mat& frame, const std::vector<cv::Mat>& outs, const cv::Ptr<cv::dnn::Layer> lastLayer)
 {
+	static int frameIdx = 1;
 	std::vector<int> classIds;
 	std::vector<float> confidences;
 	std::vector<cv::Rect> boxes;
+	std::vector<int> teams;
 
 	if (lastLayer->type.compare("Region") == 0)
 	{
@@ -196,15 +198,15 @@ void VProcessor::postprocess(cv::Mat& frame, const std::vector<cv::Mat>& outs, c
 	std::vector<int> indices;
 	cv::dnn::NMSBoxes(boxes, confidences, m_confThreshold, m_nmsThreshold, indices);
 
-	// Collect parameters needed by team classifier
+	// Setup and run team classifier.
 	ITeamClassifier::FrameProcParams fpp;
 	fpp.frame = frame;
-	fpp.boxes = boxes;
+	fpp.boxesNms = boxes;
 	fpp.indices = indices;
 	fpp.classNames = _classes;
 	fpp.classIds = classIds;
 	fpp.confidence = confidences;
-	teamClassifier->ProcessFrame(&fpp);
+	assignTeams(fpp, teams);
 
 	cv::Mat courtCopy;
 	courtCopy = courtDetect.getCourt().clone();
@@ -213,7 +215,7 @@ void VProcessor::postprocess(cv::Mat& frame, const std::vector<cv::Mat>& outs, c
 		int idx = indices[i];
 		cv::Rect box = boxes[idx];
 		drawPred(classIds[idx], confidences[idx], box.x, box.y,
-			box.x + box.width, box.y + box.height, frame);
+			box.x + box.width, box.y + box.height, frame, teams[i], idx);
 
 		if (classIds[idx] == 1)
 		{
@@ -223,24 +225,93 @@ void VProcessor::postprocess(cv::Mat& frame, const std::vector<cv::Mat>& outs, c
 			courtDetect.projectPosition(courtCopy, position);
 		}
 	}
+
+#if 0
+	// For ground truth analysis.
+	std::ostringstream pref;
+	pref << "GT/GT_Fr" << std::setfill('0') << std::right << std::dec << std::setw(3) <<
+		frameIdx << ".bmp";
+	cv::imwrite(pref.str(), frame);
+#endif
+
+	frameIdx++;
 }
 
-void VProcessor::drawPred(int classId, float conf, int left, int top, int right, int bottom, cv::Mat& frame)
+void VProcessor::drawPred(int classId, float conf, int left, int top, int right, int bottom, cv::Mat& frame, int teamIdx, int boxIdx)
 {
-	//Draw a rectangle displaying the bounding box
-	rectangle(frame, cv::Point(left, top), cv::Point(right, bottom), _colors[classId], 2);//cv::Scalar(0, 0, 255));
+	// Draw a rectangle displaying the bounding box
+	cv::Scalar teamColor;
+	if (teamIdx == 0)
+	{
+		teamColor = cv::Scalar(255, 0, 0); // Blue team
+	}
+	else if (teamIdx == 1)
+	{
+		teamColor = cv::Scalar(0, 0, 255); // Red team
+	}
+	else
+	{
+		rectangle(frame, cv::Point(left, top), cv::Point(right, bottom), _colors[classId], 2);//cv::Scalar(0, 0, 255));
+	}
 
-	//Get the label for the class name and its confidence
-	std::string label = cv::format("%.2f", conf);
+	// Identify team by color
+	if (teamIdx == 0 || teamIdx == 1)
+	{
+		rectangle(frame, cv::Point(left, top), cv::Point(right, bottom), teamColor, 2);
+#if 0
+		cv::RotatedRect rot = cv::RotatedRect(cv::Point((left + right) / 2, bottom), cv::Size(50, 16), 0);
+		cv::ellipse(frame, rot, teamColor, 18);
+#endif
+	}
+
+	// Get the box index and label for the class name and its confidence
+	std::string label = cv::format("[%d]%.2f", boxIdx, conf);
 	if (!_classes.empty())
 	{
 		CV_Assert(classId < (int)_classes.size());
 		label = _classes[classId] + ":" + label;
 	}
 
-	//Display the label at the top of the bounding box
+	// Display the label at the top of the bounding box
 	int baseLine;
 	cv::Size labelSize = cv::getTextSize(label, cv::FONT_HERSHEY_SIMPLEX, 0.5, 1, &baseLine);
 	top = cv::max(top, labelSize.height);
 	putText(frame, label, cv::Point(left, top), cv::FONT_HERSHEY_SIMPLEX, 0.5, _colors[classId], 2); //cv::Scalar(255, 255, 255));
+}
+
+void VProcessor::assignTeams(ITeamClassifier::FrameProcParams& fpp, std::vector<int>& teams)
+{	
+	if (!fpp.frame.empty() && 0 == teamClassifier->ProcessFrame(&fpp))
+	{		
+		// Assign players to teams.
+		ITeamClassifier::Team teamA;
+		ITeamClassifier::Team teamB;
+		teams.clear();
+		teamClassifier->GetTeams(teamA, teamB);
+		for (size_t i = 0; i < fpp.indices.size(); ++i)
+		{
+			int idx = fpp.indices[i];
+			int teamIdx = -1;
+			if (fpp.classIds[idx] == 1)
+			{
+				if (teamA.props.isValid)
+				{
+					auto it = std::find(teamA.playerBoxNmsIndices.begin(), teamA.playerBoxNmsIndices.end(), idx);
+					if (it != teamA.playerBoxNmsIndices.end())
+					{
+						teamIdx = 0;
+					}
+				}
+				if (teamIdx == -1 && teamB.props.isValid)
+				{
+					auto it = std::find(teamB.playerBoxNmsIndices.begin(), teamB.playerBoxNmsIndices.end(), idx);
+					if (it != teamB.playerBoxNmsIndices.end())
+					{
+						teamIdx = 1;
+					}
+				}
+			}
+			teams.push_back(teamIdx);
+		}
+	}
 }

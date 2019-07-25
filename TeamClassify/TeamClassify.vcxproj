@@ -30,6 +30,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\ObjectDetectionBasketballGame\CourtDetect.h" />
+    <ClInclude Include="..\ObjectDetectionBasketballGame\DummyTeamClassifier.h" />
+    <ClInclude Include="..\ObjectDetectionBasketballGame\ITeamClassifier.h" />
     <ClInclude Include="..\ObjectDetectionBasketballGame\MatQueue.h" />
     <ClInclude Include="..\ObjectDetectionBasketballGame\VProcessor.h" />
     <ClInclude Include="..\ObjectDetectionBasketballGame\VReader.h" />
@@ -123,9 +125,11 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_WITH_1TEAMCLASSIFIER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(OPENVINO_DIR)\opencv\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -136,15 +140,16 @@
     <PostBuildEvent>
       <Command>xcopy /y /s /i "$(ProjectDir)..\ObjectDetectionBasketballGame\yolo" "$(ProjectDir)\yolo"
 xcopy /y /s /i "$(ProjectDir)..\ObjectDetectionBasketballGame\courtdetect" "$(ProjectDir)\courtdetect"
+xcopy /y "$(ProjectDir)opencv_ffmpeg410_64.dll" "$(OutDir)"
 
 IF "$(ConfigurationName)" == "Debug" (
-xcopy /y "$(OPENVINO_DIR)\opencv\bin\opencv_world???d.dll" $(OutDir)
-xcopy /y "$(OPENVINO_DIR)\inference_engine\bin\intel64\$(Configuration)\inference_engined.dll" $(OutDir)
-xcopy /y "$(OPENVINO_DIR)\inference_engine\bin\intel64\$(Configuration)\tbb_debug.dll" $(OutDir)
+xcopy /y "$(OPENVINO_DIR)\opencv\bin\opencv_world???d.dll" "$(OutDir)"
+xcopy /y "$(OPENVINO_DIR)\inference_engine\bin\intel64\$(Configuration)\inference_engined.dll" "$(OutDir)"
+xcopy /y "$(OPENVINO_DIR)\inference_engine\bin\intel64\$(Configuration)\tbb_debug.dll" "$(OutDir)"
 ) ELSE (
-xcopy /y "$(OPENVINO_DIR)\opencv\bin\opencv_world???.dll" $(OutDir)
-xcopy /y "$(OPENVINO_DIR)\inference_engine\bin\intel64\$(Configuration)\inference_engine.dll" $(OutDir)
-xcopy /y "$(OPENVINO_DIR)\inference_engine\bin\intel64\$(Configuration)\tbb.dll" $(OutDir)
+xcopy /y "$(OPENVINO_DIR)\opencv\bin\opencv_world???.dll" "$(OutDir)"
+xcopy /y "$(OPENVINO_DIR)\inference_engine\bin\intel64\$(Configuration)\inference_engine.dll" "$(OutDir)"
+xcopy /y "$(OPENVINO_DIR)\inference_engine\bin\intel64\$(Configuration)\tbb.dll" "$(OutDir)"
 )</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -176,7 +181,7 @@ xcopy /y "$(OPENVINO_DIR)\inference_engine\bin\intel64\$(Configuration)\tbb.dll"
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;_WITH_TEAMCLASSIFIER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(OPENVINO_DIR)\opencv\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -191,15 +196,16 @@ xcopy /y "$(OPENVINO_DIR)\inference_engine\bin\intel64\$(Configuration)\tbb.dll"
     <PostBuildEvent>
       <Command>xcopy /y /s /i "$(ProjectDir)..\ObjectDetectionBasketballGame\yolo" "$(ProjectDir)\yolo"
 xcopy /y /s /i "$(ProjectDir)..\ObjectDetectionBasketballGame\courtdetect" "$(ProjectDir)\courtdetect"
+xcopy /y "$(ProjectDir)opencv_ffmpeg410_64.dll" "$(OutDir)"
 
 IF "$(ConfigurationName)" == "Debug" (
-xcopy /y "$(OPENVINO_DIR)\opencv\bin\opencv_world???d.dll" $(OutDir)
-xcopy /y "$(OPENVINO_DIR)\inference_engine\bin\intel64\$(Configuration)\inference_engined.dll" $(OutDir)
-xcopy /y "$(OPENVINO_DIR)\inference_engine\bin\intel64\$(Configuration)\tbb_debug.dll" $(OutDir)
+xcopy /y "$(OPENVINO_DIR)\opencv\bin\opencv_world???d.dll" "$(OutDir)"
+xcopy /y "$(OPENVINO_DIR)\inference_engine\bin\intel64\$(Configuration)\inference_engined.dll" "$(OutDir)"
+xcopy /y "$(OPENVINO_DIR)\inference_engine\bin\intel64\$(Configuration)\tbb_debug.dll" "$(OutDir)"
 ) ELSE (
-xcopy /y "$(OPENVINO_DIR)\opencv\bin\opencv_world???.dll" $(OutDir)
-xcopy /y "$(OPENVINO_DIR)\inference_engine\bin\intel64\$(Configuration)\inference_engine.dll" $(OutDir)
-xcopy /y "$(OPENVINO_DIR)\inference_engine\bin\intel64\$(Configuration)\tbb.dll" $(OutDir)
+xcopy /y "$(OPENVINO_DIR)\opencv\bin\opencv_world???.dll" "$(OutDir)"
+xcopy /y "$(OPENVINO_DIR)\inference_engine\bin\intel64\$(Configuration)\inference_engine.dll" "$(OutDir)"
+xcopy /y "$(OPENVINO_DIR)\inference_engine\bin\intel64\$(Configuration)\tbb.dll" "$(OutDir)"
 )</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

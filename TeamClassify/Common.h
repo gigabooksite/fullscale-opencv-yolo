@@ -33,31 +33,7 @@ namespace TeamClassify
 			double averageTime; /**< Stores avegage time */
 			double maxTime; /**< Stores max time */
 			double minTime; /**< Stores min time */
-		};
-
-		/**
-		 * Represents a detected bounding box output from the network.
-		 */
-		struct BoxProps
-		{
-			BoxProps()
-			{
-				classId = -1;
-				confidence = 0.0;
-				box = cv::Rect(0, 0, 0, 0);
-			};
-			int classId; /**< class ID */
-			float confidence; /**< confidence value */
-			cv::Rect box; /**< bounding box */
-		};
-
-		/**
-		 * Represents a frame and its properties.
-		 */
-		struct FrameContext
-		{
-			std::vector<BoxProps> boxes; /**< detected boxes in the the frame */
-		};
+		};		
 
 		/**
 		 * @brief Gets performance stats.
