@@ -90,6 +90,7 @@ namespace TeamClassify
 
 		std::vector<FrameData> frameCtxts; /**< Stores relevant information for each frame */
 		TeamClassify::Common::ProfStats profProcGetPlayerBaseColor; /**< Stores profiling stats for #GetPlayerBaseColor */
+		TeamClassify::Common::ProfStats profProcProcessFrame; /**< Stores profiling stats for #ProcessFrame */
 		TeamProps teamProps[2]; /**< Team properties */
 		Team lastTeams[2]; /**< Stores last teams */
 		const double DIST_THRESH = 75; /**< Threshold to associate a color to a team */

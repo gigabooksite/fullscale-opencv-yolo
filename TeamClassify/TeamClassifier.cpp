@@ -2,7 +2,7 @@
 
 using namespace TeamClassify;
 
-#define DO_GROUND_TRUTH 1
+#define DO_GROUND_TRUTH 0
 
 TeamClassifier::TeamClassifier() :
 	frameIdx(0)
@@ -40,8 +40,8 @@ int TeamClassifier::ProcessFrame(FrameProcParams* params)
 			break;
 		}		
 
-		// Get info for current frame.
-		
+		int64 procFrameRef = cv::getTickCount();
+		// Get info for current frame.		
 		for (size_t i = 0; i < params->indices.size(); ++i)
 		{
 			BoxProps boxProps;
@@ -150,6 +150,7 @@ int TeamClassifier::ProcessFrame(FrameProcParams* params)
 			lastTeams[props->teamIdx].playerBoxNmsIndices.push_back(props->boxNmsIdx);
 		}
 
+		Common::GetPerf(this->profProcProcessFrame, procFrameRef);
 		code = CODE_OK;
 		break; // Mandatory break for one iteration
 	}
@@ -173,8 +174,17 @@ int TeamClassifier::ProcessFrame(FrameProcParams* params)
 #endif
 
 #if 0	
-	std::cout << "\n -- FRAME " << std::dec << std::left << std::setw(3) << frameIdx << " - VProcessor::GetPlayerBaseColor:";
+	std::cout << "\n -- FRAME " << std::dec << std::left << std::setw(3) << frameIdx << " - TeamClassifier::GetPlayerBaseColor:";
 	Common::ProfStats* stats = &this->profProcGetPlayerBaseColor;
+	stats->averageTime = stats->totalTime / stats->count;
+	std::cout << "\n    AVG: " << (stats->averageTime * 1e+6) << " us,  COUNT: " << std::dec << stats->count;
+	std::cout << "\n    MIN: " << (stats->minTime * 1e+6) << " us ";
+	std::cout << "\n    MAX: " << (stats->maxTime * 1e+6) << " us ";
+#endif
+
+#if 1	
+	std::cout << "\n -- FRAME " << std::dec << std::left << std::setw(3) << frameIdx << " - TeamClassifier::ProcessFrame:";
+	Common::ProfStats* stats = &this->profProcProcessFrame;
 	stats->averageTime = stats->totalTime / stats->count;
 	std::cout << "\n    AVG: " << (stats->averageTime * 1e+6) << " us,  COUNT: " << std::dec << stats->count;
 	std::cout << "\n    MIN: " << (stats->minTime * 1e+6) << " us ";
@@ -209,17 +219,15 @@ bool TeamClassifier::GetPlayerBaseColor(const cv::Mat& frame, const cv::Rect pla
 			(playerRect.y + playerRect.height / 2) - boxRectNewHeight / 2,
 			boxRectNewWidth,
 			boxRectNewHeight);
-		cv::Mat jerseyRoi = frame(roi);
-
+		cv::Mat jerseyRoi = frame(roi); 
+		
 		// Get HSV.
 		cv::Mat roiHsv;
 		cv::cvtColor(jerseyRoi, roiHsv, cv::COLOR_BGR2HSV);
 		cv::Mat h, s, v;
 		std::vector<cv::Mat> ch;
 		cv::split(roiHsv, ch);
-		h = ch[0];
-		s = ch[1];
-		v = ch[2];
+		h = ch[0]; s = ch[1]; v = ch[2];
 
 		// Create and use mask to isolate player from background.
 		cv::Mat h_filtered = (h < 181) & (h > 105);
