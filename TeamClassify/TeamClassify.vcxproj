@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\DetectionAndTracking\DetectionAndTracking\ObjectDetector.cpp" />
     <ClCompile Include="..\ObjectDetectionBasketballGame\CourtDetect.cpp" />
     <ClCompile Include="..\ObjectDetectionBasketballGame\MatQueue.cpp" />
     <ClCompile Include="..\ObjectDetectionBasketballGame\VProcessor.cpp" />
@@ -29,6 +30,7 @@
     <ClCompile Include="TeamClassifier.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\DetectionAndTracking\DetectionAndTracking\ObjectDetector.h" />
     <ClInclude Include="..\ObjectDetectionBasketballGame\CourtDetect.h" />
     <ClInclude Include="..\ObjectDetectionBasketballGame\DummyTeamClassifier.h" />
     <ClInclude Include="..\ObjectDetectionBasketballGame\ITeamClassifier.h" />
@@ -127,7 +129,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;_WITH_TEAMCLASSIFIER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(OPENVINO_DIR)\opencv\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(OPENVINO_DIR)\opencv\include;..\DetectionAndTracking\DetectionAndTracking;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
     </ClCompile>
@@ -183,7 +185,7 @@ xcopy /y "$(OPENVINO_DIR)\inference_engine\bin\intel64\$(Configuration)\tbb.dll"
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;_WITH_TEAMCLASSIFIER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(OPENVINO_DIR)\opencv\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(OPENVINO_DIR)\opencv\include;..\DetectionAndTracking\DetectionAndTracking;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
