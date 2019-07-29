@@ -11,7 +11,6 @@
 #include "VProcessor.h"
 #include "VWriter.h"
 
-#define _WITH_TEAMCLASSIFIER
 #ifdef _WITH_TEAMCLASSIFIER
 #include "..\TeamClassify\TeamClassifier.h"
 #else
