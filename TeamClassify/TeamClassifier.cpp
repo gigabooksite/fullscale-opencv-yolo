@@ -2,7 +2,8 @@
 
 using namespace TeamClassify;
 
-#define DO_GROUND_TRUTH 0
+#define DO_GROUND_TRUTH 1 // Set to 1 to output ground truth info to console
+#define SHOW_PROFILER_STATS 0 // Set to 1 to output profiler stats to console
 
 TeamClassifier::TeamClassifier() :
 	frameIdx(0)
@@ -155,9 +156,15 @@ int TeamClassifier::ProcessFrame(FrameProcParams* params)
 		break; // Mandatory break for one iteration
 	}
 
-#if DO_GROUND_TRUTH
-	// <frame idx>, <return code>, <player count>, <P1 box idx>, <P1 team idx>, <P1 x>, <P1 y>, <P1 width>, <P1 height>, ... <Pn box idx>, <Pn team idx>, <Pn x>, <Pn y>, <Pn width>, <Pn height>, 
-	if (1 == frameIdx) std::cout << "\n<frame idx>,<return code>,<player count>,<box idx>,<team idx>,<x>,<y>,<width>,<height>";
+#if DO_GROUND_TRUTH	
+	if (1 == frameIdx)
+	{
+		// Write header once.
+		// <frame idx>, <return code>, <player count>, <P1 box idx>, <P1 team idx>, <P1 x>, <P1 y>, <P1 width>, <P1 height>, ... <Pn box idx>, <Pn team idx>, <Pn x>, <Pn y>, <Pn width>, <Pn height>, 
+		std::cout << "\n<frame idx>,<return code>,<player count>,<team idx>,<box idx>,<x>,<y>,<width>,<height>" << std::endl;
+	}
+	
+	// Write rows.
 	std::cout << std::dec << frameIdx << "," << code << "," << frameCtxt.playerBoxPropIndices.size();
 	// Sort players left to right related to position in frame.
 	std::vector<int> sorted = frameCtxt.playerBoxPropIndices;
@@ -168,23 +175,23 @@ int TeamClassifier::ProcessFrame(FrameProcParams* params)
 	for (size_t i = 0; i < sorted.size(); i++)
 	{
 		BoxProps* props = &frameCtxt.boxProps[sorted[i]]; cv::Rect boxNms = props->boxNms;
-		std::cout << "," << sorted[i] << "," << props->teamIdx << "," << boxNms.x << "," << boxNms.y << "," << boxNms.width << "," << boxNms.height;
+		std::cout << "," << props->teamIdx << "," << props->boxNmsIdx << "," << 
+			boxNms.x << "," << boxNms.y << "," << boxNms.width << "," << boxNms.height;
 	}
+	
 	std::cout << std::endl;
 #endif
 
-#if 0	
+#if SHOW_PROFILER_STATS
 	std::cout << "\n -- FRAME " << std::dec << std::left << std::setw(3) << frameIdx << " - TeamClassifier::GetPlayerBaseColor:";
 	Common::ProfStats* stats = &this->profProcGetPlayerBaseColor;
 	stats->averageTime = stats->totalTime / stats->count;
 	std::cout << "\n    AVG: " << (stats->averageTime * 1e+6) << " us,  COUNT: " << std::dec << stats->count;
 	std::cout << "\n    MIN: " << (stats->minTime * 1e+6) << " us ";
 	std::cout << "\n    MAX: " << (stats->maxTime * 1e+6) << " us ";
-#endif
 
-#if 1	
 	std::cout << "\n -- FRAME " << std::dec << std::left << std::setw(3) << frameIdx << " - TeamClassifier::ProcessFrame:";
-	Common::ProfStats* stats = &this->profProcProcessFrame;
+	stats = &this->profProcProcessFrame;
 	stats->averageTime = stats->totalTime / stats->count;
 	std::cout << "\n    AVG: " << (stats->averageTime * 1e+6) << " us,  COUNT: " << std::dec << stats->count;
 	std::cout << "\n    MIN: " << (stats->minTime * 1e+6) << " us ";

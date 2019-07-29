@@ -66,7 +66,7 @@ namespace TeamClassify
 		 * @retval 0 for team 0
 		 * @retval 1 for team 1
 		 * @retval -1 if there are no teams identified yet
-		 * @retval -2 if cannot associate to with any known teams.
+		 * @retval -2 if cannot associate with any known teams.
 		 */
 		int FindTeamIndex(cv::Scalar baseColor) const;
 
