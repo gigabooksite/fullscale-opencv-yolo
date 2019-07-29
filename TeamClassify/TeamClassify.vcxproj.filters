@@ -39,6 +39,9 @@
     <ClCompile Include="TeamClassifier.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\DetectionAndTracking\DetectionAndTracking\ObjectDetector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\ObjectDetectionBasketballGame\VWriter.h">
@@ -66,6 +69,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\ObjectDetectionBasketballGame\DummyTeamClassifier.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DetectionAndTracking\DetectionAndTracking\ObjectDetector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
