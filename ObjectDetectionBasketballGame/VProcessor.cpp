@@ -10,6 +10,7 @@
 extern std::atomic<bool> quit;
 using namespace TeamClassify;
 
+const int VProcessor::MAX_TRACK_COUNT = 5;
 const int VProcessor::m_inpWidth = 288;        // Width of network's input image
 const int VProcessor::m_inpHeight = 288;       // Height of network's input image
 const float VProcessor::m_nmsThreshold = 0.4f;  // Non-maximum suppression threshold
@@ -45,6 +46,7 @@ courtPoints{cv::Point2f(28,	332),
 VProcessor::VProcessor(MatQueue& in, MatQueue& out, ITeamClassifier* tc) :
 	_inFrames(in),
 	_outFrames(out),
+	trackCtr(MAX_TRACK_COUNT),
 	teamClassifier(tc),
 	courtDetect("MyCourtDetection")
 {
@@ -59,10 +61,7 @@ VProcessor::VProcessor(MatQueue& in, MatQueue& out, ITeamClassifier* tc) :
 		_colors.push_back(cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255)));
 	}
 
-	_net = cv::dnn::readNet(m_modelConfiguration, m_modelWeights);
-
-	_net.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
-	_net.setPreferableTarget(cv::dnn::DNN_TARGET_CPU);
+	_detector.initialize();
 
 	courtDetect.setFramePoints(framePoints);
 	courtDetect.setCourtPoints(courtPoints);
@@ -92,25 +91,33 @@ void VProcessor::operator()()
 			break;
 		}
 
-		// Create a 4D blob from a frame.
-		cv::dnn::blobFromImage(frame, blob, 1 / 255.0, cvSize(m_inpWidth, m_inpHeight), cv::Scalar(0, 0, 0), true, false);
+		if (trackCtr == MAX_TRACK_COUNT)
+		{
+			double t = (double)cv::getTickCount();
+			_detector.detectObjects(frame, outs);
+			t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
+			std::cout << "Object Detection : " << t << std::endl;
 
-		//Sets the input to the network
-		_net.setInput(blob);
+			postprocess(frame, outs, _detector.getOutputLayer());
+#ifdef TRACKING_ENABLED
+			_tracker.reset();
 
-		// Runs the forward pass to get output of the output layers
-		_net.forward(outs, names);
+			//initialize multitracker
+			_tracker.initialize(_boxes, frame);
 
-		std::vector<cv::String> lnames = _net.getLayerNames();
-		cv::Ptr<cv::dnn::Layer> outputLayer = _net.getLayer(static_cast<unsigned int>(lnames.size()));
+			trackCtr = 0;
+#endif
+		}
+#ifdef TRACKING_ENABLED
+		//update tracker
+		_tracker.trackObjects(frame, _boxes);
 
-		// Remove the bounding boxes with low confidence
-		postprocess(frame, outs, outputLayer);
+		++trackCtr;
+#endif
+		std::vector<int> teams;
+		classifyPlayer(frame, teams);
 
-		std::vector<double> layersTimes;
-		double freq = cv::getTickFrequency() / 1000;
-		double t = _net.getPerfProfile(layersTimes) / freq;
-		std::string label = cv::format("Inference time for a frame : %.2f ms", t);
+		drawPred(frame, teams);
 
 		// Write the frame with the detection boxes
 		frame.convertTo(frame, CV_8U);
@@ -128,11 +135,12 @@ std::vector<cv::String> VProcessor::getOutputsNames(const cv::dnn::Net& net)
 
 void VProcessor::postprocess(cv::Mat& frame, const std::vector<cv::Mat>& outs, const cv::Ptr<cv::dnn::Layer> lastLayer)
 {
+	_classIds.clear();
+	_confidences.clear();
+	_boxes.clear();
+	_indices.clear();
+
 	static int frameIdx = 1;
-	std::vector<int> classIds;
-	std::vector<float> confidences;
-	std::vector<cv::Rect> boxes;
-	std::vector<int> teams;
 
 	if (lastLayer->type.compare("Region") == 0)
 	{
@@ -158,9 +166,9 @@ void VProcessor::postprocess(cv::Mat& frame, const std::vector<cv::Mat>& outs, c
 					int left = centerX - width / 2;
 					int top = centerY - height / 2;
 
-					classIds.push_back(classIdPoint.x);
-					confidences.push_back((float)confidence);
-					boxes.push_back(cv::Rect(left, top, width, height));
+					_classIds.push_back(classIdPoint.x);
+					_confidences.push_back((float)confidence);
+					_boxes.push_back(cv::Rect(left, top, width, height));
 				}
 			}
 		}
@@ -184,9 +192,9 @@ void VProcessor::postprocess(cv::Mat& frame, const std::vector<cv::Mat>& outs, c
 				int xRightTop = static_cast<int>(detectionMat.at<float>(i, 5) * frame.cols);
 				int yRightTop = static_cast<int>(detectionMat.at<float>(i, 6) * frame.rows);
 
-				classIds.push_back(idx);
-				confidences.push_back((float)confidence);
-				boxes.push_back(cv::Rect(xLeftBottom, yLeftBottom, xRightTop - xLeftBottom, yRightTop - yLeftBottom));
+				_classIds.push_back(idx);
+				_confidences.push_back((float)confidence);
+				_boxes.push_back(cv::Rect(xLeftBottom, yLeftBottom, xRightTop - xLeftBottom, yRightTop - yLeftBottom));
 			}
 
 		}
@@ -195,36 +203,7 @@ void VProcessor::postprocess(cv::Mat& frame, const std::vector<cv::Mat>& outs, c
 	
 	// Perform non maximum suppression to eliminate redundant overlapping boxes with
 	// lower confidences
-	std::vector<int> indices;
-	cv::dnn::NMSBoxes(boxes, confidences, m_confThreshold, m_nmsThreshold, indices);
-
-	// Setup and run team classifier.
-	ITeamClassifier::FrameProcParams fpp;
-	fpp.frame = frame;
-	fpp.boxesNms = boxes;
-	fpp.indices = indices;
-	fpp.classNames = _classes;
-	fpp.classIds = classIds;
-	fpp.confidence = confidences;
-	assignTeams(fpp, teams);
-
-	cv::Mat courtCopy;
-	courtCopy = courtDetect.getCourt().clone();
-	for (size_t i = 0; i < indices.size(); ++i)
-	{
-		int idx = indices[i];
-		cv::Rect box = boxes[idx];
-		drawPred(classIds[idx], confidences[idx], box.x, box.y,
-			box.x + box.width, box.y + box.height, frame, teams[i], idx);
-
-		if (classIds[idx] == 1)
-		{
-			cv::Point2f position;
-			position.x = (float)box.x + (box.width / 2);
-			position.y = (float)box.y + box.height;
-			courtDetect.projectPosition(courtCopy, position);
-		}
-	}
+	cv::dnn::NMSBoxes(_boxes, _confidences, m_confThreshold, m_nmsThreshold, _indices);
 
 #if 0
 	// For ground truth analysis.
@@ -237,33 +216,61 @@ void VProcessor::postprocess(cv::Mat& frame, const std::vector<cv::Mat>& outs, c
 	frameIdx++;
 }
 
-void VProcessor::drawPred(int classId, float conf, int left, int top, int right, int bottom, cv::Mat& frame, int teamIdx, int boxIdx)
+//void VProcessor::drawPred(int classId, float conf, int left, int top, int right, int bottom, cv::Mat& frame, int teamIdx, int boxIdx)
+void VProcessor::drawPred(cv::Mat& frame, std::vector<int>& teams)
 {
-	// Draw a rectangle displaying the bounding box
-	cv::Scalar teamColor;
-	if (teamIdx == 0)
+	cv::Mat courtCopy;
+	courtCopy = courtDetect.getCourt().clone();
+	for (size_t i = 0; i < _indices.size(); ++i)
 	{
-		teamColor = cv::Scalar(255, 0, 0); // Blue team
-	}
-	else if (teamIdx == 1)
-	{
-		teamColor = cv::Scalar(0, 0, 255); // Red team
-	}
-	else
-	{
-		rectangle(frame, cv::Point(left, top), cv::Point(right, bottom), _colors[classId], 2);//cv::Scalar(0, 0, 255));
-	}
+		int idx = _indices[i];
+		cv::Rect box = _boxes[idx];
 
-	// Identify team by color
-	if (teamIdx == 0 || teamIdx == 1)
-	{
-		rectangle(frame, cv::Point(left, top), cv::Point(right, bottom), teamColor, 2);
+		int left = box.x;
+		int top = box.y;
+		int right = box.x + box.width;
+		int bottom = box.y + box.height;
+
+		// Draw a rectangle displaying the bounding box
+		cv::Scalar teamColor;
+		size_t teamIdx = teams[i];
+		if (teamIdx == 0)
+		{
+			teamColor = cv::Scalar(255, 0, 0); // Blue team
+		}
+		else if (teamIdx == 1)
+		{
+			teamColor = cv::Scalar(0, 0, 255); // Red team
+		}
+		else
+		{
+			rectangle(frame, cv::Point(left, top), cv::Point(right, bottom), _colors[_classIds[idx]], 2);//cv::Scalar(0, 0, 255));
+		}
+
+		// Identify team by color
+		if (teamIdx == 0 || teamIdx == 1)
+		{
+			cv::Mat overlay;
+			frame.copyTo(overlay);
+
+			ellipse(overlay, cv::Point(left + ((right - left) / 2), bottom - 10), cv::Size(60, 40), 0, 0, 360, teamColor, -1);
+
+			cv::addWeighted(overlay, 0.3, frame, 0.7, 0, frame);
 #if 0
-		cv::RotatedRect rot = cv::RotatedRect(cv::Point((left + right) / 2, bottom), cv::Size(50, 16), 0);
-		cv::ellipse(frame, rot, teamColor, 18);
+			cv::RotatedRect rot = cv::RotatedRect(cv::Point((left + right) / 2, bottom), cv::Size(50, 16), 0);
+			cv::ellipse(frame, rot, teamColor, 18);
 #endif
-	}
+		}
 
+		if (_classIds[idx] == 1)
+		{
+			cv::Point2f position;
+			position.x = (float)box.x + (box.width / 2);
+			position.y = (float)box.y + box.height;
+			courtDetect.projectPosition(courtCopy, position);
+		}
+	}
+#if 0 //do not display label for now
 	// Get the box index and label for the class name and its confidence
 	std::string label = cv::format("[%d]%.2f", boxIdx, conf);
 	if (!_classes.empty())
@@ -277,6 +284,21 @@ void VProcessor::drawPred(int classId, float conf, int left, int top, int right,
 	cv::Size labelSize = cv::getTextSize(label, cv::FONT_HERSHEY_SIMPLEX, 0.5, 1, &baseLine);
 	top = cv::max(top, labelSize.height);
 	putText(frame, label, cv::Point(left, top), cv::FONT_HERSHEY_SIMPLEX, 0.5, _colors[classId], 2); //cv::Scalar(255, 255, 255));
+#endif
+}
+
+void VProcessor::classifyPlayer(cv::Mat& frame, std::vector<int>& teams)
+{
+	// Setup and run team classifier.
+	ITeamClassifier::FrameProcParams fpp;
+	fpp.frame = frame;
+	fpp.boxesNms = _boxes;
+	fpp.indices = _indices;
+	fpp.classNames = _classes;
+	fpp.classIds = _classIds;
+	fpp.confidence = _confidences;
+
+	assignTeams(fpp, teams);
 }
 
 void VProcessor::assignTeams(ITeamClassifier::FrameProcParams& fpp, std::vector<int>& teams)
