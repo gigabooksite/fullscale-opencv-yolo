@@ -19,7 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CourtDetect.cpp" />
     <ClCompile Include="MatQueue.cpp" />
     <ClCompile Include="ObjectDetector.cpp" />
     <ClCompile Include="VProcessor.cpp" />
@@ -28,7 +27,6 @@
     <ClCompile Include="YOLO.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CourtDetect.h" />
     <ClInclude Include="DummyTeamClassifier.h" />
     <ClInclude Include="ITeamClassifier.h" />
     <ClInclude Include="MatQueue.h" />

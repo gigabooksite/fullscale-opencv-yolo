@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CourtDetect.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MatQueue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -38,9 +35,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CourtDetect.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="DummyTeamClassifier.h">
       <Filter>Header Files</Filter>
     </ClInclude>

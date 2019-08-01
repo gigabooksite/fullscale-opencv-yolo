@@ -42,11 +42,13 @@ courtPoints{cv::Point2f(28,	332),
 };
 
 VProcessor::VProcessor(MatQueue& in, MatQueue& out, ITeamClassifier* tc) :
-	_inFrames(in),
-	_outFrames(out),
-	trackCtr(MAX_TRACK_COUNT),
-	teamClassifier(tc),
-	courtDetect("MyCourtDetection")
+	  _inFrames(in)
+	, _outFrames(out)
+	, trackCtr(MAX_TRACK_COUNT)
+	, teamClassifier(tc)
+#ifdef COURT_DETECT_ENABLED
+	, courtDetect("MyCourtDetection")
+#endif
 {
 	cv::RNG rng(12345);
 
@@ -61,9 +63,11 @@ VProcessor::VProcessor(MatQueue& in, MatQueue& out, ITeamClassifier* tc) :
 
 	_detector.initialize();
 
+#ifdef COURT_DETECT_ENABLED
 	courtDetect.setFramePoints(framePoints);
 	courtDetect.setCourtPoints(courtPoints);
 	courtDetect.setCourt("courtdetect/court.png");
+#endif
 }
 
 
@@ -91,10 +95,7 @@ void VProcessor::operator()()
 
 		if (trackCtr == MAX_TRACK_COUNT)
 		{
-			double t = (double)cv::getTickCount();
 			_detector.detectObjects(frame, outs);
-			t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
-			std::cout << "Object Detection : " << t << std::endl;
 
 			postprocess(frame, outs, _detector.getOutputLayer());
 #ifdef TRACKING_ENABLED
@@ -217,8 +218,10 @@ void VProcessor::postprocess(cv::Mat& frame, const std::vector<cv::Mat>& outs, c
 //void VProcessor::drawPred(int classId, float conf, int left, int top, int right, int bottom, cv::Mat& frame, int teamIdx, int boxIdx)
 void VProcessor::drawPred(cv::Mat& frame, std::vector<int>& teams)
 {
+#ifdef COURT_DETECT_ENABLED
 	cv::Mat courtCopy;
 	courtCopy = courtDetect.getCourt().clone();
+#endif
 	for (size_t i = 0; i < _indices.size(); ++i)
 	{
 		int idx = _indices[i];
@@ -265,7 +268,9 @@ void VProcessor::drawPred(cv::Mat& frame, std::vector<int>& teams)
 			cv::Point2f position;
 			position.x = (float)box.x + (box.width / 2);
 			position.y = (float)box.y + box.height;
+#ifdef COURT_DETECT_ENABLED
 			courtDetect.projectPosition(courtCopy, position);
+#endif
 		}
 	}
 #if 0 //do not display label for now

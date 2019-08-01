@@ -53,8 +53,9 @@ private:
 	static const cv::String m_modelConfiguration;
 	static const cv::String m_modelWeights;
 	static const std::string m_classesFile;
-
+#ifdef COURT_DETECT_ENABLED
 	CourtDetect courtDetect;
+#endif
 };
 
 #endif

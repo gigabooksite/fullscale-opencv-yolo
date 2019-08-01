@@ -25,15 +25,19 @@ int main(int argc, char* argv[])
 	MatQueue capture;
 	MatQueue display;
 
+#ifdef COURT_DETECT_ENABLED
+	cv::String source = "courtdetect/video.mp4";
+#else
+	cv::String source = "yolo/XWtjl9fI9pY_clip_11.mp4"; 
+#endif
 
 #ifdef _WITH_TEAMCLASSIFIER
-	VReader reader(capture, "yolo/XWtjl9fI9pY_clip_11.mp4");	
 	TeamClassifier teamClassifier;
 #else
-	VReader reader(capture, "courtdetect/video.mp4");
 	DummyTeamClassifier teamClassifier;
 #endif
 
+	VReader reader(capture, source);
 	VProcessor processor(capture, display, &teamClassifier);
 	VWriter writer(display, "output.avi");
 
