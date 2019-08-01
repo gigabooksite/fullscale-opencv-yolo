@@ -15,6 +15,8 @@ Implementation of YOLOv3 using OpenCV - C++ library and Darknet - C Framework fo
             - w_openvino_toolkit_p_2019.1.148
 - VS2019 Community: https://visualstudio.microsoft.com/
 - https://www.opencv-srf.com/2017/11/install-opencv-with-visual-studio.html
+- Manual OpenCV compilation needed for Object Tracking feature. Needs opencv_contrib
+            - https://www.learnopencv.com/install-opencv3-on-windows/
 
 # Dataset link:
 - SPIRODOUME: https://sites.uclouvain.be/ispgroup/Softwares/SPIROUDOME
