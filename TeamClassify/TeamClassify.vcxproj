@@ -19,9 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\DetectionAndTracking\DetectionAndTracking\ObjectDetector.cpp" />
     <ClCompile Include="..\ObjectDetectionBasketballGame\CourtDetect.cpp" />
     <ClCompile Include="..\ObjectDetectionBasketballGame\MatQueue.cpp" />
+    <ClCompile Include="..\ObjectDetectionBasketballGame\ObjectDetector.cpp" />
     <ClCompile Include="..\ObjectDetectionBasketballGame\VProcessor.cpp" />
     <ClCompile Include="..\ObjectDetectionBasketballGame\VReader.cpp" />
     <ClCompile Include="..\ObjectDetectionBasketballGame\VWriter.cpp" />
@@ -30,11 +30,11 @@
     <ClCompile Include="TeamClassifier.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\DetectionAndTracking\DetectionAndTracking\ObjectDetector.h" />
     <ClInclude Include="..\ObjectDetectionBasketballGame\CourtDetect.h" />
     <ClInclude Include="..\ObjectDetectionBasketballGame\DummyTeamClassifier.h" />
     <ClInclude Include="..\ObjectDetectionBasketballGame\ITeamClassifier.h" />
     <ClInclude Include="..\ObjectDetectionBasketballGame\MatQueue.h" />
+    <ClInclude Include="..\ObjectDetectionBasketballGame\ObjectDetector.h" />
     <ClInclude Include="..\ObjectDetectionBasketballGame\VProcessor.h" />
     <ClInclude Include="..\ObjectDetectionBasketballGame\VReader.h" />
     <ClInclude Include="..\ObjectDetectionBasketballGame\VWriter.h" />

@@ -143,13 +143,13 @@ xcopy /y /s /i "$(ProjectDir)..\..\ObjectDetectionBasketballGame\courtdetect" "$
   <ItemGroup>
     <ClCompile Include="..\..\ObjectDetectionBasketballGame\CourtDetect.cpp" />
     <ClCompile Include="..\..\ObjectDetectionBasketballGame\MatQueue.cpp" />
+    <ClCompile Include="..\..\ObjectDetectionBasketballGame\ObjectDetector.cpp" />
     <ClCompile Include="..\..\ObjectDetectionBasketballGame\VProcessor.cpp" />
     <ClCompile Include="..\..\ObjectDetectionBasketballGame\VReader.cpp" />
     <ClCompile Include="..\..\ObjectDetectionBasketballGame\VWriter.cpp" />
     <ClCompile Include="..\..\ObjectDetectionBasketballGame\YOLO.cpp" />
     <ClCompile Include="..\..\TeamClassify\Common.cpp" />
     <ClCompile Include="..\..\TeamClassify\TeamClassifier.cpp" />
-    <ClCompile Include="ObjectDetector.cpp" />
     <ClCompile Include="ObjectTracker.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -157,12 +157,12 @@ xcopy /y /s /i "$(ProjectDir)..\..\ObjectDetectionBasketballGame\courtdetect" "$
     <ClInclude Include="..\..\ObjectDetectionBasketballGame\DummyTeamClassifier.h" />
     <ClInclude Include="..\..\ObjectDetectionBasketballGame\ITeamClassifier.h" />
     <ClInclude Include="..\..\ObjectDetectionBasketballGame\MatQueue.h" />
+    <ClInclude Include="..\..\ObjectDetectionBasketballGame\ObjectDetector.h" />
     <ClInclude Include="..\..\ObjectDetectionBasketballGame\VProcessor.h" />
     <ClInclude Include="..\..\ObjectDetectionBasketballGame\VReader.h" />
     <ClInclude Include="..\..\ObjectDetectionBasketballGame\VWriter.h" />
     <ClInclude Include="..\..\TeamClassify\Common.h" />
     <ClInclude Include="..\..\TeamClassify\TeamClassifier.h" />
-    <ClInclude Include="ObjectDetector.h" />
     <ClInclude Include="ObjectTracker.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

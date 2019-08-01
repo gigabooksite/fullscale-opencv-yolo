@@ -39,10 +39,10 @@
     <ClCompile Include="..\..\TeamClassify\TeamClassifier.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectDetector.cpp">
+    <ClCompile Include="ObjectTracker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectTracker.cpp">
+    <ClCompile Include="..\..\ObjectDetectionBasketballGame\ObjectDetector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -74,10 +74,10 @@
     <ClInclude Include="..\..\TeamClassify\TeamClassifier.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectDetector.h">
+    <ClInclude Include="ObjectTracker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectTracker.h">
+    <ClInclude Include="..\..\ObjectDetectionBasketballGame\ObjectDetector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
