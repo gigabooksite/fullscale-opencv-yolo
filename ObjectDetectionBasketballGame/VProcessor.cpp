@@ -11,8 +11,6 @@ extern std::atomic<bool> quit;
 using namespace TeamClassify;
 
 const int VProcessor::MAX_TRACK_COUNT = 5;
-const int VProcessor::m_inpWidth = 288;        // Width of network's input image
-const int VProcessor::m_inpHeight = 288;       // Height of network's input image
 const float VProcessor::m_nmsThreshold = 0.4f;  // Non-maximum suppression threshold
 const float VProcessor::m_confThreshold = 0.5f; // Confidence threshold
 
