@@ -9,12 +9,13 @@ Implementation of YOLOv3 using OpenCV - C++ library and Darknet - C Framework fo
 - TeamClassify - interfaces with ObjectDetectionBasketballGame to get each of the "player" blob and then associates it to one of the two teams
 
 # Setup Guidelines
-- OpenCV pre-compiled: https://sourceforge.net/projects/opencvlibrary/files/4.1.0/
+- OpenCV
+  - Pre-compiled: https://sourceforge.net/projects/opencvlibrary/files/4.1.0/
             - opencv-4.1.0-vc14_vc15.exe
-- OpenCV from Intel OpenVINO toolkit: https://software.intel.com/en-us/openvino-toolkit
+  - From Intel OpenVINO toolkit: https://software.intel.com/en-us/openvino-toolkit
             - w_openvino_toolkit_p_2019.1.148
 - VS2019 Community: https://visualstudio.microsoft.com/
-- https://www.opencv-srf.com/2017/11/install-opencv-with-visual-studio.html
+- OpenCV setup for VS2019 - https://www.opencv-srf.com/2017/11/install-opencv-with-visual-studio.html
 - Manual OpenCV compilation needed for Object Tracking feature. Needs opencv_contrib
             - https://www.learnopencv.com/install-opencv3-on-windows/
 
