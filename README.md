@@ -10,10 +10,12 @@ Implementation of YOLOv3 using OpenCV - C++ library and Darknet - C Framework fo
 
 # Setup Guidelines
 - OpenCV
-  - Pre-compiled: https://sourceforge.net/projects/opencvlibrary/files/4.1.0/
-            - opencv-4.1.0-vc14_vc15.exe
-  - From Intel OpenVINO toolkit: https://software.intel.com/en-us/openvino-toolkit
-            - w_openvino_toolkit_p_2019.1.148
+    - Pre-compiled:
+        - https://sourceforge.net/projects/opencvlibrary/files/4.1.0/
+        - opencv-4.1.0-vc14_vc15.exe
+    - From Intel OpenVINO toolkit: 
+        - https://software.intel.com/en-us/openvino-toolkit
+        - w_openvino_toolkit_p_2019.1.148
 - VS2019 Community: https://visualstudio.microsoft.com/
 - OpenCV setup for VS2019 - https://www.opencv-srf.com/2017/11/install-opencv-with-visual-studio.html
 - Manual OpenCV compilation needed for Object Tracking feature. Needs opencv_contrib
