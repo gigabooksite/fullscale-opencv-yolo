@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Team Classifiers">
+      <UniqueIdentifier>{b25ccaae-83c5-4dff-9203-52c722297ea0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Team Classifiers">
+      <UniqueIdentifier>{759747c2-6796-4c09-9d1f-94875e0fb196}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MatQueue.cpp">
@@ -33,14 +39,17 @@
     <ClCompile Include="YOLO.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TeamClassifiers\TeamClassifierFactory.cpp">
+      <Filter>Source Files\Team Classifiers</Filter>
+    </ClCompile>
+    <ClCompile Include="TeamClassifiers\TeamClassifier.cpp">
+      <Filter>Source Files\Team Classifiers</Filter>
+    </ClCompile>
+    <ClCompile Include="TeamClassifiers\Common.cpp">
+      <Filter>Source Files\Team Classifiers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DummyTeamClassifier.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ITeamClassifier.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MatQueue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -55,6 +64,21 @@
     </ClInclude>
     <ClInclude Include="VWriter.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TeamClassifiers\Common.h">
+      <Filter>Header Files\Team Classifiers</Filter>
+    </ClInclude>
+    <ClInclude Include="TeamClassifiers\DummyTeamClassifier.h">
+      <Filter>Header Files\Team Classifiers</Filter>
+    </ClInclude>
+    <ClInclude Include="TeamClassifiers\ITeamClassifier.h">
+      <Filter>Header Files\Team Classifiers</Filter>
+    </ClInclude>
+    <ClInclude Include="TeamClassifiers\TeamClassifier.h">
+      <Filter>Header Files\Team Classifiers</Filter>
+    </ClInclude>
+    <ClInclude Include="TeamClassifiers\TeamClassifierFactory.h">
+      <Filter>Header Files\Team Classifiers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

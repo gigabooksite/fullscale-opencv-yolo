@@ -21,16 +21,22 @@
   <ItemGroup>
     <ClCompile Include="MatQueue.cpp" />
     <ClCompile Include="ObjectDetector.cpp" />
+    <ClCompile Include="TeamClassifiers\Common.cpp" />
+    <ClCompile Include="TeamClassifiers\TeamClassifier.cpp" />
+    <ClCompile Include="TeamClassifiers\TeamClassifierFactory.cpp" />
     <ClCompile Include="VProcessor.cpp" />
     <ClCompile Include="VReader.cpp" />
     <ClCompile Include="VWriter.cpp" />
     <ClCompile Include="YOLO.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DummyTeamClassifier.h" />
-    <ClInclude Include="ITeamClassifier.h" />
     <ClInclude Include="MatQueue.h" />
     <ClInclude Include="ObjectDetector.h" />
+    <ClInclude Include="TeamClassifiers\Common.h" />
+    <ClInclude Include="TeamClassifiers\DummyTeamClassifier.h" />
+    <ClInclude Include="TeamClassifiers\ITeamClassifier.h" />
+    <ClInclude Include="TeamClassifiers\TeamClassifier.h" />
+    <ClInclude Include="TeamClassifiers\TeamClassifierFactory.h" />
     <ClInclude Include="VProcessor.h" />
     <ClInclude Include="VReader.h" />
     <ClInclude Include="VWriter.h" />
@@ -104,13 +110,21 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(OPENCV_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(OPENCV_DIR)\include;.\TeamClassifiers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <AdditionalDependencies>opencv_world410d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OPENCV_DIR)\x64\vc16\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>IF "$(ConfigurationName)" == "Debug" (
+xcopy /y "$(OPENCV_DIR)\$(PlatformName)\vc16\bin\opencv_world???d.dll" "$(OutDir)"
+) ELSE (
+xcopy /y "$(OPENCV_DIR)\$(PlatformName)\vc16\bin\opencv_world???.dll" "$(OutDir)"
+)
+xcopy /y "$(OPENCV_DIR)\$(PlatformName)\vc16\bin\opencv_ffmpeg*.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -135,7 +149,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(OPENCV_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(OPENCV_DIR)\include;.\TeamClassifiers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -144,6 +158,14 @@
       <AdditionalLibraryDirectories>$(OPENCV_DIR)\x64\vc16\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opencv_world410.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>IF "$(ConfigurationName)" == "Debug" (
+xcopy /y "$(OPENCV_DIR)\$(PlatformName)\vc16\bin\opencv_world???d.dll" "$(OutDir)"
+) ELSE (
+xcopy /y "$(OPENCV_DIR)\$(PlatformName)\vc16\bin\opencv_world???.dll" "$(OutDir)"
+)
+xcopy /y "$(OPENCV_DIR)\$(PlatformName)\vc16\bin\opencv_ffmpeg*.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

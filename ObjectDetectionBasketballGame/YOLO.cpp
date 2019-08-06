@@ -10,12 +10,7 @@
 #include "VReader.h"
 #include "VProcessor.h"
 #include "VWriter.h"
-
-#ifdef _WITH_TEAMCLASSIFIER
-#include "..\TeamClassify\TeamClassifier.h"
-#else
-#include "DummyTeamClassifier.h"
-#endif
+#include "TeamClassifierFactory.h"
 
 using namespace TeamClassify;
 std::atomic<bool> quit = false;
@@ -30,15 +25,10 @@ int main(int argc, char* argv[])
 #else
 	cv::String source = "yolo/XWtjl9fI9pY_clip_11.mp4"; 
 #endif
-
-#ifdef _WITH_TEAMCLASSIFIER
-	TeamClassifier teamClassifier;
-#else
-	DummyTeamClassifier teamClassifier;
-#endif
-
+	
+	ITeamClassifier* teamClassifer = TeamClassifierFactory::CreateTeamClassifier("dummy");
 	VReader reader(capture, source);
-	VProcessor processor(capture, display, &teamClassifier);
+	VProcessor processor(capture, display, teamClassifer);
 	VWriter writer(display, "output.avi");
 
 	std::thread t1(reader);
@@ -52,6 +42,8 @@ int main(int argc, char* argv[])
 	t3.join();
 
 	cv::waitKey(1);
+
+	if (nullptr != teamClassifer) delete teamClassifer;
 
 	return 0;
 }
