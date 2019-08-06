@@ -160,12 +160,12 @@ int TeamClassifier::ProcessFrame(FrameProcParams* params)
 	if (1 == frameIdx)
 	{
 		// Write header once.
-		// <frame idx>, <return code>, <player count>, <P1 box idx>, <P1 team idx>, <P1 x>, <P1 y>, <P1 width>, <P1 height>, ... <Pn box idx>, <Pn team idx>, <Pn x>, <Pn y>, <Pn width>, <Pn height>, 
-		std::cout << "\n<frame idx>,<return code>,<player count>,<team idx>,<box idx>,<x>,<y>,<width>,<height>" << std::endl;
+		// <frame idx>, <return code>, <player count>,<reserve>, <P1 box idx>, <P1 team idx>, <P1 x>, <P1 y>, <P1 width>, <P1 height>, ... <Pn box idx>, <Pn team idx>, <Pn x>, <Pn y>, <Pn width>, <Pn height>, 
+		std::cout << "\n<frame idx>,<return code>,<player count>,<reserve>,<team idx>,<box idx>,<x>,<y>,<width>,<height>" << std::endl;
 	}
 	
 	// Write rows.
-	std::cout << std::dec << frameIdx << "," << code << "," << frameCtxt.playerBoxPropIndices.size();
+	std::cout << std::dec << frameIdx << "," << code << "," << frameCtxt.playerBoxPropIndices.size() << ",";
 	// Sort players left to right related to position in frame.
 	std::vector<int> sorted = frameCtxt.playerBoxPropIndices;
 	std::sort(sorted.begin(), sorted.end(), [frameCtxt](const int& lhs, const int& rhs)
