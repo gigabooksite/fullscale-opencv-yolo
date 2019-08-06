@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Team Classifiers">
+      <UniqueIdentifier>{3064bc7e-aa92-44e5-b235-729093a735f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Team Classifiers">
+      <UniqueIdentifier>{89bf3d0a-530a-41cd-a565-8e3c40c5f458}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ObjectDetectionBasketballGame\CourtDetect.cpp">
@@ -33,27 +39,24 @@
     <ClCompile Include="..\..\ObjectDetectionBasketballGame\YOLO.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\TeamClassify\Common.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\TeamClassify\TeamClassifier.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ObjectTracker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\ObjectDetectionBasketballGame\ObjectDetector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\ObjectDetectionBasketballGame\TeamClassifiers\TeamClassifierFactory.cpp">
+      <Filter>Source Files\Team Classifiers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ObjectDetectionBasketballGame\TeamClassifiers\TeamClassifier.cpp">
+      <Filter>Source Files\Team Classifiers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ObjectDetectionBasketballGame\TeamClassifiers\Common.cpp">
+      <Filter>Source Files\Team Classifiers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ObjectDetectionBasketballGame\CourtDetect.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ObjectDetectionBasketballGame\DummyTeamClassifier.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ObjectDetectionBasketballGame\ITeamClassifier.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ObjectDetectionBasketballGame\MatQueue.h">
@@ -68,17 +71,26 @@
     <ClInclude Include="..\..\ObjectDetectionBasketballGame\VWriter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\TeamClassify\Common.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\TeamClassify\TeamClassifier.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ObjectTracker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ObjectDetectionBasketballGame\ObjectDetector.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ObjectDetectionBasketballGame\TeamClassifiers\Common.h">
+      <Filter>Header Files\Team Classifiers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ObjectDetectionBasketballGame\TeamClassifiers\DummyTeamClassifier.h">
+      <Filter>Header Files\Team Classifiers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ObjectDetectionBasketballGame\TeamClassifiers\ITeamClassifier.h">
+      <Filter>Header Files\Team Classifiers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ObjectDetectionBasketballGame\TeamClassifiers\TeamClassifier.h">
+      <Filter>Header Files\Team Classifiers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ObjectDetectionBasketballGame\TeamClassifiers\TeamClassifierFactory.h">
+      <Filter>Header Files\Team Classifiers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
