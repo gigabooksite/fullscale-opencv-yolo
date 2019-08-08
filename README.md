@@ -26,3 +26,39 @@ Implementation of YOLOv3 using OpenCV - C++ library and Darknet - C Framework fo
 - SPIRODOUME: https://sites.uclouvain.be/ispgroup/Softwares/SPIROUDOME
 - APIDIS: https://sites.uclouvain.be/ispgroup/Softwares/APIDIS
 - Videos converted to mp4: https://drive.google.com/drive/folders/1zPqdsXjPGO7MHSKoteczzE0SiBp6_Yzv?usp=sharing
+
+# Darknet Tips
+
+## Build Darknet with VS2019 and OpenCV from OpenVINO toolkit
+
+**Prerequisites:**
+- Visual Studio 2019
+- Intel OpenVINO Toolkit (w_openvino_toolkit_p_2019.1.148)
+
+**Procedure:**
+- Clone https://github.com/AlexeyAB/darknet.git.
+- Open `darknet_no_gpu.sln`, from `darknet\build\darknet`, in VS2019.
+- Set build config to Release x64.
+- In project properties, change OpenCV include path to point to the one from the OpenVINO install directory.
+	> **Example:** `C:\Program Files (x86)\IntelSWTools\openvino_2019.1.148\opencv\include`
+- In project properties, change OpenCV library path to the one from the OpenVINO install directory.
+	> **Example:** `C:\Program Files (x86)\IntelSWTools\openvino_2019.1.148\opencv\lib`
+- Build `darknet_no_gpu` project. On successful build, the output files are placed in `darknet\build\darknet\x64`.
+
+**(Optional) Set up environment setup script:**
+- Download `setupvars.bat` from `fullscale-opencv-yolo\Darknet` and place it in `darknet\scripts`.
+- Edit `setupvars.bat` and set `INTEL_OPENVINO_DIR` to the OpenVINO install directory.
+	> **Example:** `set  "INTEL_OPENVINO_DIR=C:\Program Files (x86)\IntelSWTools\openvino_2019.1.148"`
+- Open a terminal and run the script.
+	```
+	C:\>call darknet\scripts\setupvars.bat
+	ECHO is off.
+	----------------------------------------------------------------------------- 
+	SUCCESS. Darknet environment initialized successfully.
+	-----------------------------------------------------------------------------
+	```
+- Check environment was set up correctly.
+	```
+	C:\>darknet_no_gpu
+	usage: darknet_no_gpu <function>
+	```
