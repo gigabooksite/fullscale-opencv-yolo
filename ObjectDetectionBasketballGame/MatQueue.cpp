@@ -28,3 +28,8 @@ void MatQueue::push(MyMat frame)
 	mlock.unlock();
 	_cond.notify_one();
 }
+
+size_t MatQueue::size() const
+{
+	return _queue.size();
+}

@@ -14,6 +14,8 @@ public:
 private:
 	MatQueue& _frames;
 	cv::VideoCapture _cap;
+
+	const size_t MAX_QUEUE_SIZE = 1000;
 };
 
 #endif

@@ -33,6 +33,11 @@ void VReader::operator()()
 	cv::Mat frame;
 	do
 	{
+		if (_frames.size() == MAX_QUEUE_SIZE)
+		{
+			continue;
+		}
+
 		if ((_cap.read(frame) == false) || (frame.empty()))
 		{
 			std::cout << "ERROR reading frame" << std::endl;

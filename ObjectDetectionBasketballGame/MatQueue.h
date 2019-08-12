@@ -24,6 +24,7 @@ public:
 
 	MyMat pop();
 	void push(MyMat frame);
+	size_t size() const;
 private:
 	std::queue<MyMat> _queue;
 	std::mutex _mutex;
