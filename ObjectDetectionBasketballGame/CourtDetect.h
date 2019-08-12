@@ -21,7 +21,7 @@ public:
 	bool setCourt(const std::string courtFile);
 	cv::Mat getCourt();
 	bool setSettingsFile(const std::string settingsFile);
-	void projectPosition(cv::Mat& court, cv::Point2f position);
+	void projectPosition(cv::Mat& court, cv::Point2f position, cv::Scalar teamColor);
 private:
 	std::string winName;
 	std::string courtFile;

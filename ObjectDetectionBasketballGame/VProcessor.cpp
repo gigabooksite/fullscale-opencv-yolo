@@ -95,6 +95,7 @@ void VProcessor::operator()()
 
 		if (trackCtr == MAX_TRACK_COUNT)
 		{
+			cv::putText(frame, "DETECT", cv::Point(0, 20), 1, 1, cv::Scalar(0, 255, 0), 2);
 			_detector.detectObjects(frame, outs);
 
 			postprocess(frame, outs, _detector.getOutputLayer());
@@ -109,8 +110,8 @@ void VProcessor::operator()()
 		}
 #ifdef TRACKING_ENABLED
 		//update tracker
+		cv::putText(frame, "TRACK", cv::Point(0, 20), 1, 1, cv::Scalar(0, 255, 0), 2);
 		_tracker.trackObjects(frame, _boxes);
-
 		++trackCtr;
 #endif
 		std::vector<int> teams;
@@ -245,7 +246,7 @@ void VProcessor::drawPred(cv::Mat& frame, std::vector<int>& teams)
 		}
 		else
 		{
-			rectangle(frame, cv::Point(left, top), cv::Point(right, bottom), _colors[_classIds[idx]], 2);//cv::Scalar(0, 0, 255));
+			teamColor = cv::Scalar(0, 127, 255); // Unknown team / a ball
 		}
 
 		// Identify team by color
@@ -262,6 +263,10 @@ void VProcessor::drawPred(cv::Mat& frame, std::vector<int>& teams)
 			cv::ellipse(frame, rot, teamColor, 18);
 #endif
 		}
+		else
+		{
+			rectangle(frame, cv::Point(left, top), cv::Point(right, bottom), teamColor, 2);//cv::Scalar(0, 0, 255));
+		}
 
 		if (_classIds[idx] == 1)
 		{
@@ -269,7 +274,7 @@ void VProcessor::drawPred(cv::Mat& frame, std::vector<int>& teams)
 			position.x = (float)box.x + (box.width / 2);
 			position.y = (float)box.y + box.height;
 #ifdef COURT_DETECT_ENABLED
-			courtDetect.projectPosition(courtCopy, position);
+			courtDetect.projectPosition(courtCopy, position, teamColor);
 #endif
 		}
 	}

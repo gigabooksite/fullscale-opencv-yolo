@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
 	cv::String source = "yolo/XWtjl9fI9pY_clip_11.mp4"; 
 #endif
 	
-	ITeamClassifier* teamClassifer = TeamClassifierFactory::CreateTeamClassifier("dummy");
+	ITeamClassifier* teamClassifer = TeamClassifierFactory::CreateTeamClassifier("teamclassifier");
 	VReader reader(capture, source);
 	VProcessor processor(capture, display, teamClassifer);
 	VWriter writer(display, "output.avi");

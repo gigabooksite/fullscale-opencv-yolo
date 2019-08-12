@@ -70,7 +70,7 @@ bool CourtDetect::setSettingsFile(const std::string settingsFile)
 	return true;
 }
 
-void CourtDetect::projectPosition(cv::Mat& court, cv::Point2f position)
+void CourtDetect::projectPosition(cv::Mat& court, cv::Point2f position, cv::Scalar teamColor)
 {
 	cv::Mat homography = findHomography(framePoints, courtPoints, cv::RANSAC);
 
@@ -81,7 +81,7 @@ void CourtDetect::projectPosition(cv::Mat& court, cv::Point2f position)
 	cv::perspectiveTransform(srcVecP, courtVecP, homography);
 	courtPoint = courtVecP[0];
 
-	circle(court, courtPoint, 3, cv::Scalar(255), 1, cv::LINE_8);
+	circle(court, courtPoint, 3, teamColor, 2, cv::LINE_8);
 
 	cv::imshow(winName, court);
 	cv::waitKey(10);
