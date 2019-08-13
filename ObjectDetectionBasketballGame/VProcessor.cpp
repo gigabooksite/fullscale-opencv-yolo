@@ -26,22 +26,7 @@ const cv::String VProcessor::m_modelWeights = "mobilenetSSD/deploy.caffemodel";
 const std::string VProcessor::m_classesFile = "mobilenetSSD/classes.txt";
 #endif
 
-std::vector<cv::Point2f>
-framePoints{ cv::Point2f(56,782),
-			cv::Point2f(615,442),
-			cv::Point2f(1455,491),
-			cv::Point2f(1409,1104),
-};
-
-std::vector<cv::Point2f>
-courtPoints{cv::Point2f(28,	332),
-			cv::Point2f(28,30),
-			cv::Point2f(319,30),
-			cv::Point2f(319,336),
-
-};
-
-VProcessor::VProcessor(MatQueue& in, MatQueue& out, ITeamClassifier* tc) :
+VProcessor::VProcessor(MatQueue& in, MatQueue& out, ITeamClassifier* tc, std::vector<cv::Point2f> framePoints, std::vector<cv::Point2f> courtPoints) :
 	  _inFrames(in)
 	, _outFrames(out)
 	, trackCtr(MAX_TRACK_COUNT)

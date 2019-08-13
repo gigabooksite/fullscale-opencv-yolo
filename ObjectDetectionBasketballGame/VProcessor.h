@@ -16,7 +16,7 @@
 class VProcessor
 {
 public:
-	VProcessor(MatQueue& in, MatQueue& out, TeamClassify::ITeamClassifier *tc);
+	VProcessor(MatQueue& in, MatQueue& out, TeamClassify::ITeamClassifier *tc, std::vector<cv::Point2f> framePoints, std::vector<cv::Point2f> courtPoints);
 	~VProcessor();
 	void operator()();
 private:
