@@ -7,97 +7,116 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/calib3d.hpp>
 
-using namespace cv;
-using namespace dnn;
-using namespace std;
+const std::string courtWindow = "Court";
+const std::string frameWindow = "Frame";
 
-const string kWinName = "Court Detection";
+std::vector<cv::Point2f> framePoints, courtPoints;
+cv::Point2f framePoint, courtPoint;
 
-void onMouseClickFrame(int event, int x, int y, int flags, void* param);
+void onMouseClickFrame(int event, int x, int y, int flags, void* param)
+{
+	if (framePoints.size() < 4 && event == cv::EVENT_FLAG_LBUTTON)
+	{
+		framePoints.push_back(cv::Point2f(x, y));
+		std::cout << "Frame corner " << x << "," << y << " captured\n";
+	}
+	else if (framePoints.size() == 4)
+	{
+		std::cout << "Finished capturing frame corners\n";
+		cv::destroyWindow(frameWindow);
+	}
+}
+
+void onMouseClickCourt(int event, int x, int y, int flags, void* param)
+{
+	if (courtPoints.size() < 4 && event == cv::EVENT_FLAG_LBUTTON)
+	{
+		courtPoints.push_back(cv::Point2f(x, y));
+		std::cout << "Court corner " << x << "," << y << " captured\n";
+	}
+	else if (courtPoints.size() == 4)
+	{
+		std::cout << "Finished capturing court corners\n";
+		cv::destroyWindow(courtWindow);
+	}
+}
+
+void onMouseDrag(int event, int x, int y, int flags, void* param)
+{
+	if (event == cv::MouseEventTypes::EVENT_MOUSEMOVE)
+	{
+		cv::Point2f* sourcePoint = (cv::Point2f*)param;
+		sourcePoint->x = (float)x;
+		sourcePoint->y = (float)y;
+	}
+}
 
 int main(int argc, char** argv)
 {
-	string	camSettingsFile = "cam1_data.xml",
-			frameFile = "frame.jpg",
-			courtFile = "court.png",
-			videoFile = "video.png";
-	Mat intrinsics, distortion, undistortedFrame;
+	std::string	camSettingsFile = "cam1_data.xml",
+				frameFile = "frame.jpg",
+				courtFile = "court.png",
+				videoFile = "video.png";
 
-	// These points were manually found by impementing a click handler on the window and outputing
-	// the x,y position on the console using cout
-	vector<Point2f>	framePoints{ 
-						Point2f(1,399),
-						Point2f(309,222),
-						Point2f(745,245),
-						Point2f(729,571),
-					},
-					courtPoints{
-						Point2f(30,	320),
-						Point2f(30,31),
-						Point2f(320,31),
-						Point2f(320,338),
-					};
-	Point2f sourcePoint, courtPoint;
+	cv::Mat frame = cv::imread(frameFile);
+	cv::Mat court = cv::imread(courtFile);
 
-	Mat frame = imread(frameFile);
-	Mat court = imread(courtFile);
-	FileStorage fs(camSettingsFile, FileStorage::READ);
-	fs["camera_matrix"] >> intrinsics;
-	fs["distortion_coefficients"] >> distortion;
-	
-	namedWindow(kWinName);
-	setMouseCallback(kWinName, onMouseClickFrame, (void*)& sourcePoint);
-
-	if (frame.empty() || court.empty()) {
-		cout << "Error reading image";
-		return 0;
+	if (frame.empty() || court.empty())
+	{
+		std::cout << "Error reading image/s";
+		return -1;
 	}
 
-	undistort(frame, undistortedFrame, intrinsics, distortion);
+	// get corner points of frame and court images
+	std::cout << "Click frame and court corners\n";
 
-	Mat resized;
-	cv::resize(undistortedFrame, resized, Size(800, 600));
-	imshow(kWinName, resized);
+	cv::namedWindow(courtWindow);
+	cv::setMouseCallback(courtWindow, onMouseClickCourt);
+	cv::imshow(courtWindow, court);
 
-	
-	Mat homography = findHomography(framePoints, courtPoints, RANSAC);
-	
-	while (1) {
-		
-			//cout << "Current mouse point = " << sourcePoint.x << "," << sourcePoint.y << endl;
-			vector<Point2f> srcVecP{ sourcePoint };
-			vector<Point2f> courtVecP{ courtPoint };
-			perspectiveTransform(srcVecP, courtVecP, homography);
+	cv::namedWindow(frameWindow);
+	cv::setMouseCallback(frameWindow, onMouseClickFrame);
+	cv::resize(frame, frame, cv::Size(800, 600));
+	cv::imshow(frameWindow, frame);
 
-			courtPoint = courtVecP[0];
+	cv::waitKey();
 
-			Mat courtClone = court.clone();
-			circle(courtClone, courtPoint, 3, Scalar(255), 1, LINE_8);
+	// match frame and court images
+	std::cout << "Mapping frame and court images\n";
+	cv::Mat intrinsics, distortion, undistortedFrame;
+	cv::FileStorage fs(camSettingsFile, cv::FileStorage::READ);
+	fs["camera_matrix"] >> intrinsics;
+	fs["distortion_coefficients"] >> distortion;
 
-		imshow(kWinName, resized);
-		imshow("Court", courtClone);
+	cv::undistort(frame, undistortedFrame, intrinsics, distortion);
 
-		char key = (char)waitKey(30);
+	cv::resize(undistortedFrame, frame, cv::Size(800, 600));
+	cv::imshow(frameWindow, frame);
+
+	cv::Mat homography = findHomography(framePoints, courtPoints, cv::RANSAC);
+	cv::setMouseCallback(frameWindow, onMouseDrag, (void*)& framePoint);
+
+	std::cout << "Finished mapping\n";
+	while (1)
+	{
+		std::vector<cv::Point2f> srcVecP{ framePoint };
+		std::vector<cv::Point2f> courtVecP{ courtPoint };
+		perspectiveTransform(srcVecP, courtVecP, homography);
+
+		courtPoint = courtVecP[0];
+
+		cv::Mat courtClone = court.clone();
+		cv::circle(courtClone, courtPoint, 3, cv::Scalar(0, 0, 255), 2, cv::LINE_8);
+
+		cv::imshow(frameWindow, frame);
+		cv::imshow(courtWindow, courtClone);
+
+		char key = (char)cv::waitKey(30);
 		if (key == 'q' || key == 27)
 		{
 			break;
 		}
-	 }
+	}
+
 	return 0;
-}
-
-void onMouseClickFrame(int event, int x, int y, int flags, void* param)
-{
-	// Capture the point coordinates, for now we will do it manually instead of feature-detection
-	if (event == EVENT_FLAG_LBUTTON) {
-		cout << "Point " << x << "," << y << " captured" << endl;
-	}
-
-	// Map where the mouse is hovering on the video frame to a separate "flat court" picture
-	if (event == MouseEventTypes::EVENT_MOUSEMOVE)
-	{
-		Point2f* sourcePoint = (Point2f*) param;
-		sourcePoint->x = (float)x;
-		sourcePoint->y = (float)y;
-	}
 }
