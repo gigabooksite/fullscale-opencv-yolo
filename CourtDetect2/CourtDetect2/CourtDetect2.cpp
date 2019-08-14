@@ -102,7 +102,12 @@ int main(int argc, char** argv)
 
 	if (framePoints.size() < minImagePoints || courtPoints.size() < minImagePoints)
 	{
-		std::cout << "ERROR must select at least 4 points.\n";
+		std::cout << "ERROR must select at least 4 points for each.\n";
+		return -1;
+	}
+	else if (framePoints.size() != courtPoints.size())
+	{
+		std::cout << "ERROR frame and court selected points must match.\n";
 		return -1;
 	}
 
