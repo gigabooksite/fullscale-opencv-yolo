@@ -7,6 +7,8 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/calib3d.hpp>
 
+const int minImagePoints = 4;
+const int maxImagePoints = 15;
 const std::string courtWindow = "Court";
 const std::string frameWindow = "Frame";
 
@@ -15,28 +17,28 @@ cv::Point2f framePoint, courtPoint;
 
 void onMouseClickFrame(int event, int x, int y, int flags, void* param)
 {
-	if (framePoints.size() < 4 && event == cv::EVENT_FLAG_LBUTTON)
+	if (framePoints.size() < maxImagePoints && event == cv::EVENT_FLAG_LBUTTON)
 	{
 		framePoints.push_back(cv::Point2f(x, y));
-		std::cout << "Frame corner " << x << "," << y << " captured\n";
+		std::cout << "Frame point " << x << "," << y << " captured\n";
 	}
-	else if (framePoints.size() == 4)
+	else if (framePoints.size() == maxImagePoints)
 	{
-		std::cout << "Finished capturing frame corners\n";
+		std::cout << "Finished capturing frame points\n";
 		cv::destroyWindow(frameWindow);
 	}
 }
 
 void onMouseClickCourt(int event, int x, int y, int flags, void* param)
 {
-	if (courtPoints.size() < 4 && event == cv::EVENT_FLAG_LBUTTON)
+	if (courtPoints.size() < maxImagePoints && event == cv::EVENT_FLAG_LBUTTON)
 	{
 		courtPoints.push_back(cv::Point2f(x, y));
-		std::cout << "Court corner " << x << "," << y << " captured\n";
+		std::cout << "Court point " << x << "," << y << " captured\n";
 	}
-	else if (courtPoints.size() == 4)
+	else if (courtPoints.size() == maxImagePoints)
 	{
-		std::cout << "Finished capturing court corners\n";
+		std::cout << "Finished capturing court points\n";
 		cv::destroyWindow(courtWindow);
 	}
 }
@@ -67,22 +69,17 @@ int main(int argc, char** argv)
 		return -1;
 	}
 
-	// get corner points of frame and court images
-	std::cout << "Click frame and court corners\n";
+	std::cout << "Click frame and court points\n";
+	std::cout << "Up to 15 points can be captured. Press ESC to finish with less than 15 points.\n";
 
+	// get points of court
 	cv::namedWindow(courtWindow);
 	cv::setMouseCallback(courtWindow, onMouseClickCourt);
-	cv::imshow(courtWindow, court);
+	cv::Mat tempCourt = court.clone();
+	cv::putText(tempCourt, "Click court points", cv::Point(0, 25), 1, 2, cv::Scalar(0, 255, 0), 2);
+	cv::imshow(courtWindow, tempCourt);
 
-	cv::namedWindow(frameWindow);
-	cv::setMouseCallback(frameWindow, onMouseClickFrame);
-	cv::resize(frame, frame, cv::Size(800, 600));
-	cv::imshow(frameWindow, frame);
-
-	cv::waitKey();
-
-	// match frame and court images
-	std::cout << "Mapping frame and court images\n";
+	// get points of frame
 	cv::Mat intrinsics, distortion, undistortedFrame;
 	cv::FileStorage fs(camSettingsFile, cv::FileStorage::READ);
 	fs["camera_matrix"] >> intrinsics;
@@ -91,12 +88,33 @@ int main(int argc, char** argv)
 	cv::undistort(frame, undistortedFrame, intrinsics, distortion);
 
 	cv::resize(undistortedFrame, frame, cv::Size(800, 600));
+	cv::namedWindow(frameWindow);
+	cv::setMouseCallback(frameWindow, onMouseClickFrame);
+	cv::resize(undistortedFrame, frame, cv::Size(800, 600));
+
+	cv::Mat tempFrame = frame.clone();
+	cv::putText(tempFrame, "Click frame points", cv::Point(0, 25), 1, 2, cv::Scalar(0, 255, 0), 2);
+	cv::imshow(frameWindow, tempFrame);
+
+	cv::waitKey();
+	cv::destroyWindow(courtWindow);
+	cv::destroyWindow(frameWindow);
+
+	if (framePoints.size() < minImagePoints || courtPoints.size() < minImagePoints)
+	{
+		std::cout << "ERROR must select at least 4 points.\n";
+		return -1;
+	}
+
+	// match frame and court images
+	std::cout << "Mapping frame and court images\n";
+	cv::putText(frame, "Hover mouse on court.", cv::Point(0, 25), 1, 2, cv::Scalar(0, 255, 0), 2);
 	cv::imshow(frameWindow, frame);
 
 	cv::Mat homography = findHomography(framePoints, courtPoints, cv::RANSAC);
 	cv::setMouseCallback(frameWindow, onMouseDrag, (void*)& framePoint);
 
-	std::cout << "Finished mapping\n";
+	std::cout << "Finished mapping. Hover mouse over frame image to check.\n";
 	while (1)
 	{
 		std::vector<cv::Point2f> srcVecP{ framePoint };
