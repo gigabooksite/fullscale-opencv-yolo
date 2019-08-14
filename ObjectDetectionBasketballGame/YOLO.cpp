@@ -52,19 +52,25 @@ void onMouseClickCourt(int event, int x, int y, int flags, void* param)
 
 void calibratePoints(const std::string& source)
 {
+	std::cout << "Click court and frame corners\n";
+
+	// get court points
+	cv::Mat court = cv::imread("courtdetect/court.png");
+
+	cv::namedWindow(courtWindow);
+	cv::setMouseCallback(courtWindow, onMouseClickCourt);
+	cv::putText(court, "Click court corners", cv::Point(0, 25), 1, 2, cv::Scalar(0, 255, 0), 2);
+	cv::imshow(courtWindow, court);
+
+	// get frame points
 	cv::VideoCapture cap;
 	cap.open(source);
 	cv::Mat frame;
 	cap.read(frame);
-	cv::Mat court = cv::imread("courtdetect/court.png");
-
-	std::cout << "Click court and frame corners\n";
-	cv::namedWindow(courtWindow);
-	cv::setMouseCallback(courtWindow, onMouseClickCourt);
-	cv::imshow(courtWindow, court);
 
 	cv::namedWindow(frameWindow);
 	cv::setMouseCallback(frameWindow, onMouseClickFrame);
+	cv::putText(frame, "Click frame corners", cv::Point(0, 25), 1, 2, cv::Scalar(0, 255, 0), 2);
 	cv::imshow(frameWindow, frame);
 
 	cv::waitKey();
@@ -79,6 +85,12 @@ int main(int argc, char* argv[])
 #ifdef COURT_DETECT_ENABLED
 	cv::String source = "courtdetect/video.mp4";
 	calibratePoints(source);
+
+	if (framePoints.size() < 4 || courtPoints.size() < 4)
+	{
+		std::cout << "ERROR failed to click all corners\n";
+		return -1;
+	}
 #else
 	cv::String source = "yolo/XWtjl9fI9pY_clip_11.mp4"; 
 #endif
