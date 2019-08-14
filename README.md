@@ -3,7 +3,7 @@ Implementation of YOLOv3 using OpenCV - C++ library and Darknet - C Framework fo
 
 # Solutions:
 - [CalibrateCam](https://github.com/gigabooksite/fullscale-opencv-yolo/wiki/CalibrateCam-How-To) - utility function for getting camera intrinsics and distortion data
-- CourtDetect2 - map a point in a basketball video to the equivalent point/position in a "flat/top-down-view court" image
+- CourtDetect2 - manually map a set of points in a basketball game image to the equivalent point/position in a "flat/top-down-view court" image, and detect mouse location accordingly
 - HSVRangeFinder - utility for finding the optimal HSV range for isolating a specific color
 - ObjectDetectionBasketballGame - simple object detection program that detects player and ball in court
 - ObjectDetectionBasketballGame\TeamClassifiers - contains implementations for associating each player "blob" to one of the two teams
@@ -19,6 +19,7 @@ Implementation of YOLOv3 using OpenCV - C++ library and Darknet - C Framework fo
     - Manual compilation
         - Needed for ObjectTracking feature using opencv_contrib
         - https://www.learnopencv.com/install-opencv3-on-windows/
+		- Note: Check `BUILD_opencv_world` to generate necessary `.dll` file
 - VS2019 Community: https://visualstudio.microsoft.com/
 - OpenCV setup for VS2019: https://www.opencv-srf.com/2017/11/install-opencv-with-visual-studio.html
 
