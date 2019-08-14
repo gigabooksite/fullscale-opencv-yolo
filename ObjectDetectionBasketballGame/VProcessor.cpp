@@ -26,13 +26,13 @@ const cv::String VProcessor::m_modelWeights = "mobilenetSSD/deploy.caffemodel";
 const std::string VProcessor::m_classesFile = "mobilenetSSD/classes.txt";
 #endif
 
-VProcessor::VProcessor(MatQueue& in, MatQueue& out, ITeamClassifier* tc, std::vector<cv::Point2f> framePoints, std::vector<cv::Point2f> courtPoints) :
+VProcessor::VProcessor(MatQueue& in, MatQueue& out, ITeamClassifier* tc, std::string frameSource) :
 	  _inFrames(in)
 	, _outFrames(out)
 	, trackCtr(MAX_TRACK_COUNT)
 	, teamClassifier(tc)
 #ifdef COURT_DETECT_ENABLED
-	, courtDetect("MyCourtDetection")
+	, courtDetect("MyCourtDetection", "courtdetect/court.png", frameSource)
 #endif
 {
 	cv::RNG rng(12345);
@@ -47,12 +47,6 @@ VProcessor::VProcessor(MatQueue& in, MatQueue& out, ITeamClassifier* tc, std::ve
 	}
 
 	_detector.initialize();
-
-#ifdef COURT_DETECT_ENABLED
-	courtDetect.setFramePoints(framePoints);
-	courtDetect.setCourtPoints(courtPoints);
-	courtDetect.setCourt("courtdetect/court.png");
-#endif
 }
 
 
