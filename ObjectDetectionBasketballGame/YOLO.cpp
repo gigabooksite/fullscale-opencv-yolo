@@ -19,48 +19,52 @@ std::vector<cv::Point2f> framePoints;
 std::vector<cv::Point2f> courtPoints;
 
 #ifdef COURT_DETECT_ENABLED
+const int minImagePoints = 4;
+const int maxImagePoints = 15;
 const std::string courtWindow = "Court";
 const std::string frameWindow = "Frame";
 
 void onMouseClickFrame(int event, int x, int y, int flags, void* param)
 {
-	if (framePoints.size() < 4 && event == cv::EVENT_FLAG_LBUTTON)
+	if (framePoints.size() < maxImagePoints && event == cv::EVENT_FLAG_LBUTTON)
 	{
 		framePoints.push_back(cv::Point2f(x, y));
-		std::cout << "Frame corner " << x << "," << y << " captured\n";
+		std::cout << "Frame point " << x << "," << y << " captured\n";
 	}
-	else if (framePoints.size() == 4)
+	else if (framePoints.size() == maxImagePoints)
 	{
-		std::cout << "Finished capturing frame corners\n";
+		std::cout << "Finished capturing frame points\n";
 		cv::destroyWindow(frameWindow);
 	}
 }
 
 void onMouseClickCourt(int event, int x, int y, int flags, void* param)
 {
-	if (courtPoints.size() < 4 && event == cv::EVENT_FLAG_LBUTTON)
+	if (courtPoints.size() < maxImagePoints && event == cv::EVENT_FLAG_LBUTTON)
 	{
 		courtPoints.push_back(cv::Point2f(x, y));
-		std::cout << "Court corner " << x << "," << y << " captured\n";
+		std::cout << "Court point " << x << "," << y << " captured\n";
 	}
-	else if (courtPoints.size() == 4)
+	else if (courtPoints.size() == maxImagePoints)
 	{
-		std::cout << "Finished capturing court corners\n";
+		std::cout << "Finished capturing court points\n";
 		cv::destroyWindow(courtWindow);
 	}
 }
 
 void calibratePoints(const std::string& source)
 {
-	std::cout << "Click court and frame corners\n";
+	std::cout << "Click frame and court points\n";
+	std::cout << "Up to 15 points can be captured. Press ESC to finish with less than 15 points.\n";
 
 	// get court points
 	cv::Mat court = cv::imread("courtdetect/court.png");
 
 	cv::namedWindow(courtWindow);
 	cv::setMouseCallback(courtWindow, onMouseClickCourt);
-	cv::putText(court, "Click court corners", cv::Point(0, 25), 1, 2, cv::Scalar(0, 255, 0), 2);
-	cv::imshow(courtWindow, court);
+	cv::Mat tempCourt = court.clone();
+	cv::putText(tempCourt, "Click court points", cv::Point(0, 25), 1, 2, cv::Scalar(0, 255, 0), 2);
+	cv::imshow(courtWindow, tempCourt);
 
 	// get frame points
 	cv::VideoCapture cap;
@@ -70,10 +74,12 @@ void calibratePoints(const std::string& source)
 
 	cv::namedWindow(frameWindow);
 	cv::setMouseCallback(frameWindow, onMouseClickFrame);
-	cv::putText(frame, "Click frame corners", cv::Point(0, 25), 1, 2, cv::Scalar(0, 255, 0), 2);
+	cv::putText(frame, "Click frame points", cv::Point(0, 25), 1, 2, cv::Scalar(0, 255, 0), 2);
 	cv::imshow(frameWindow, frame);
 
 	cv::waitKey();
+	cv::destroyWindow(courtWindow);
+	cv::destroyWindow(frameWindow);
 }
 #endif
 
@@ -85,10 +91,15 @@ int main(int argc, char* argv[])
 #ifdef COURT_DETECT_ENABLED
 	cv::String source = "courtdetect/video.mp4";
 	calibratePoints(source);
-
-	if (framePoints.size() < 4 || courtPoints.size() < 4)
+	
+	if (framePoints.size() < minImagePoints || courtPoints.size() < minImagePoints)
 	{
-		std::cout << "ERROR failed to click all corners\n";
+		std::cout << "ERROR must select at least 4 points for each.\n";
+		return -1;
+	}
+	else if (framePoints.size() != courtPoints.size())
+	{
+		std::cout << "ERROR frame and court selected points must match.\n";
 		return -1;
 	}
 #else
