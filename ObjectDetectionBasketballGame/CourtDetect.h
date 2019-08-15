@@ -11,8 +11,8 @@ public:
 	CourtDetect(const std::string& winName,
 				std::vector<cv::Point2f>& fPoints,
 				std::vector<cv::Point2f>& cPoints,
-				const std::string settingsFile,
-				const std::string courtFile);
+				const std::string& settingsFile,
+				const std::string& courtImage);
 	virtual ~CourtDetect();
 
 	bool setCourt(const std::string courtFile);

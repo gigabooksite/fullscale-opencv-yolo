@@ -6,17 +6,30 @@ const int minImagePoints = 4;
 const int maxImagePoints = 15;
 const std::string courtWindow = "Court";
 const std::string frameWindow = "Frame";
+const cv::Scalar green(0, 255, 0);
+const cv::Scalar black(0, 0, 0);
 
 std::vector<cv::Point2f> framePoints;
 std::vector<cv::Point2f> courtPoints;
+
+void markClickedPoint(cv::Mat& image, const size_t points, int x, int y)
+{
+	cv::circle(image, cv::Point(x, y), 1, black, 5);
+	cv::circle(image, cv::Point(x, y), 1, green, 2);
+	cv::putText(image, std::to_string(points), cv::Point(x - 5, y - 10), 1, 1, black, 5);
+	cv::putText(image, std::to_string(points), cv::Point(x - 5, y - 10), 1, 1, green, 2);
+}
 
 void onMouseClickFrame(int event, int x, int y, int flags, void* param)
 {
 	if (framePoints.size() < maxImagePoints && event == cv::EVENT_FLAG_LBUTTON)
 	{
-		// @TODO mark clicked point in actual image?
 		framePoints.push_back(cv::Point2f(x, y));
+		cv::Mat& tempFrame = *((cv::Mat*)(param));
+		markClickedPoint(tempFrame, framePoints.size(), x, y);
+
 		std::cout << "Frame point " << x << "," << y << " captured\n";
+		cv::imshow(frameWindow, tempFrame);
 	}
 	else if (framePoints.size() == maxImagePoints)
 	{
@@ -29,9 +42,12 @@ void onMouseClickCourt(int event, int x, int y, int flags, void* param)
 {
 	if (courtPoints.size() < maxImagePoints && event == cv::EVENT_FLAG_LBUTTON)
 	{
-		// @TODO mark clicked point in actual image?
 		courtPoints.push_back(cv::Point2f(x, y));
+		cv::Mat& tempCourt = *((cv::Mat*)(param));
+		markClickedPoint(tempCourt, courtPoints.size(), x, y);
+
 		std::cout << "Court point " << x << "," << y << " captured\n";
+		cv::imshow(courtWindow, tempCourt);
 	}
 	else if (courtPoints.size() == maxImagePoints)
 	{
@@ -47,23 +63,21 @@ void calibratePoints(const std::string& courtImage, const std::string& frameVide
 
 	// get court points
 	cv::Mat court = cv::imread(courtImage);
-
-	cv::Mat tempCourt = court.clone();
-	cv::putText(tempCourt, "Click court points", cv::Point(0, 25), 1, 2, cv::Scalar(0, 255, 0), 2);
-	cv::imshow(courtWindow, tempCourt);
+	cv::putText(court, "Click 4-15 court points", cv::Point(0, 25), 1, 2, green, 2);
+	cv::imshow(courtWindow, court);
 	cv::namedWindow(courtWindow);
-	cv::setMouseCallback(courtWindow, onMouseClickCourt);
+	cv::setMouseCallback(courtWindow, onMouseClickCourt, &court);
 
 	// get frame points
 	cv::VideoCapture cap;
 	cap.open(frameVideo);
 	cv::Mat frame;
 	cap.read(frame);
-
-	cv::putText(frame, "Click frame points", cv::Point(0, 25), 1, 2, cv::Scalar(0, 255, 0), 2);
+	cv::putText(frame, "Click 4-15 frame points", cv::Point(0, 25), 1, 2, green, 2);
 	cv::imshow(frameWindow, frame);
+
 	cv::namedWindow(frameWindow);
-	cv::setMouseCallback(frameWindow, onMouseClickFrame);
+	cv::setMouseCallback(frameWindow, onMouseClickFrame, &frame);
 
 	cv::waitKey();
 	cv::destroyWindow(courtWindow);
@@ -82,10 +96,9 @@ void calibratePoints(const std::string& courtImage, const std::string& frameVide
 }
 
 CourtDetect::CourtDetect(const std::string& winName, const std::string& courtImage, const std::string& frameVideo)
-	: winName(winName)
+	: winName(winName), court(cv::imread(courtImage))
 {
 	calibratePoints(courtImage, frameVideo);
-	setCourt(courtImage);
 }
 
 CourtDetect::~CourtDetect()
@@ -93,9 +106,9 @@ CourtDetect::~CourtDetect()
 }
 
 CourtDetect::CourtDetect(const std::string& winName, std::vector<cv::Point2f>& fPoints,
-							std::vector<cv::Point2f>& cPoints, const std::string settingsFile,
-							const std::string courtFile)
-	: winName(winName)//, framePoints(fPoints), courtPoints(cPoints)
+							std::vector<cv::Point2f>& cPoints, const std::string& settingsFile,
+							const std::string& courtImage)
+	: winName(winName), court(cv::imread(courtImage))
 {
 	cv::FileStorage fs(settingsFile, cv::FileStorage::READ);
 	if (fs.isOpened())
@@ -103,9 +116,6 @@ CourtDetect::CourtDetect(const std::string& winName, std::vector<cv::Point2f>& f
 		fs["camera_matrix"] >> intrinsics;
 		fs["distortion_coefficients"] >> distortion;
 	}
-	cv::namedWindow(winName);
-
-	court = cv::imread(courtFile);
 }
 
 bool CourtDetect::setCourt(const std::string courtFile)
