@@ -8,8 +8,14 @@
 
 extern std::atomic<bool> quit;
 
+#ifdef COURT_DETECT_ENABLED.
+const cv::Size outputSize(1600, 1200);
+#else
+const cv::Size outputSize(1280, 720);
+#endif
+
 VWriter::VWriter(MatQueue& mat, const cv::String& outFile) : _frames(mat),
-	_video(outFile, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), 29, cv::Size(1280, 720))
+	_video(outFile, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), 29, outputSize)
 {
 	
 }
