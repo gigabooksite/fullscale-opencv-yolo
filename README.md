@@ -19,7 +19,9 @@ Implementation of YOLOv3 using OpenCV - C++ library and Darknet - C Framework fo
     - Manual compilation
         - Needed for ObjectTracking feature using opencv_contrib
         - https://www.learnopencv.com/install-opencv3-on-windows/
-		- Note: Check `BUILD_opencv_world` to generate necessary `.dll` file
+		- Include the following flags
+			- `BUILD_opencv_world` to generate `opencv_worldXXX.dll` file
+			- `OPENCV_ENABLE_NONFREE` for CourtStitcher
 - VS2019 Community: https://visualstudio.microsoft.com/
 - OpenCV setup for VS2019: https://www.opencv-srf.com/2017/11/install-opencv-with-visual-studio.html
 
