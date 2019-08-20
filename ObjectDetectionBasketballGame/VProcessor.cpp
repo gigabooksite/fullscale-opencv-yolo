@@ -26,13 +26,13 @@ const cv::String VProcessor::m_modelWeights = "mobilenetSSD/deploy.caffemodel";
 const std::string VProcessor::m_classesFile = "mobilenetSSD/classes.txt";
 #endif
 
-VProcessor::VProcessor(MatQueue& in, MatQueue& out, ITeamClassifier* tc, std::string frameSource) :
+VProcessor::VProcessor(MatQueue& in, MatQueue& out, ITeamClassifier* tc) :
 	  _inFrames(in)
 	, _outFrames(out)
 	, trackCtr(MAX_TRACK_COUNT)
 	, teamClassifier(tc)
 #ifdef COURT_DETECT_ENABLED
-	, courtDetect("MyCourtDetection", "courtdetect/court.png", frameSource)
+	, courtDetect("MyCourtDetection")
 #endif
 {
 	cv::RNG rng(12345);
@@ -98,6 +98,12 @@ void VProcessor::operator()()
 		std::vector<int> teams;
 		classifyPlayer(frame, teams);
 
+#ifdef COURT_DETECT_ENABLED
+		if (!courtDetect.isCalibrated())
+		{
+			courtDetect.calibratePoints("courtdetect/court.png", frame);
+		}
+#endif
 		drawPred(frame, teams);
 
 		// Write the frame with the detection boxes
@@ -255,7 +261,10 @@ void VProcessor::drawPred(cv::Mat& frame, std::vector<int>& teams)
 			position.x = (float)box.x + (box.width / 2);
 			position.y = (float)box.y + box.height;
 #ifdef COURT_DETECT_ENABLED
-			courtDetect.projectPosition(courtCopy, position, teamColor);
+			if (courtDetect.isCalibrated())
+			{
+				courtDetect.projectPosition(courtCopy, position, teamColor);
+			}
 #endif
 		}
 	}
