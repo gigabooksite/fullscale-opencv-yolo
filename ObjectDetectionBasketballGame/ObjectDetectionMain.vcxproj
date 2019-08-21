@@ -35,6 +35,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CourtStitcher.cpp" />
     <ClCompile Include="MatQueue.cpp" />
     <ClCompile Include="ObjectDetector.cpp" />
     <ClCompile Include="TeamClassifiers\Common.cpp" />
@@ -46,6 +47,7 @@
     <ClCompile Include="YOLO.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CourtStitcher.h" />
     <ClInclude Include="MatQueue.h" />
     <ClInclude Include="ObjectDetector.h" />
     <ClInclude Include="TeamClassifiers\Common.h" />

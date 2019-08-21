@@ -48,6 +48,9 @@
     <ClCompile Include="TeamClassifiers\Common.cpp">
       <Filter>Source Files\Team Classifiers</Filter>
     </ClCompile>
+    <ClCompile Include="CourtStitcher.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MatQueue.h">
@@ -79,6 +82,9 @@
     </ClInclude>
     <ClInclude Include="TeamClassifiers\TeamClassifierFactory.h">
       <Filter>Header Files\Team Classifiers</Filter>
+    </ClInclude>
+    <ClInclude Include="CourtStitcher.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

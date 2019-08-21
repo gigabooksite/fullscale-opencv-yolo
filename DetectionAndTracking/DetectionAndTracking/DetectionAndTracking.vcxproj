@@ -156,6 +156,7 @@ xcopy /y "$(OPENCV_DIR)\$(PlatformName)\vc16\bin\opencv_ffmpeg*.dll" "$(OutDir)"
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ObjectDetectionBasketballGame\CourtDetect.cpp" />
+    <ClCompile Include="..\..\ObjectDetectionBasketballGame\CourtStitcher.cpp" />
     <ClCompile Include="..\..\ObjectDetectionBasketballGame\MatQueue.cpp" />
     <ClCompile Include="..\..\ObjectDetectionBasketballGame\ObjectDetector.cpp" />
     <ClCompile Include="..\..\ObjectDetectionBasketballGame\TeamClassifiers\Common.cpp" />
@@ -169,6 +170,7 @@ xcopy /y "$(OPENCV_DIR)\$(PlatformName)\vc16\bin\opencv_ffmpeg*.dll" "$(OutDir)"
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ObjectDetectionBasketballGame\CourtDetect.h" />
+    <ClInclude Include="..\..\ObjectDetectionBasketballGame\CourtStitcher.h" />
     <ClInclude Include="..\..\ObjectDetectionBasketballGame\MatQueue.h" />
     <ClInclude Include="..\..\ObjectDetectionBasketballGame\ObjectDetector.h" />
     <ClInclude Include="..\..\ObjectDetectionBasketballGame\TeamClassifiers\Common.h" />
