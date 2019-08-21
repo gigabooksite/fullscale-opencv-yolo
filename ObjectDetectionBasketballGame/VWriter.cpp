@@ -9,7 +9,7 @@
 extern std::atomic<bool> quit;
 
 #ifdef COURT_DETECT_ENABLED.
-const cv::Size outputSize(1600, 1200);
+const cv::Size outputSize(1830, 615);
 #else
 const cv::Size outputSize(1280, 720);
 #endif
