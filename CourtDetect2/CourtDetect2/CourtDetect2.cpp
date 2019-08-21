@@ -12,15 +12,30 @@ const int maxImagePoints = 15;
 const std::string courtWindow = "Court";
 const std::string frameWindow = "Frame";
 
+const cv::Scalar green(0, 255, 0);
+const cv::Scalar black(0, 0, 0);
+
 std::vector<cv::Point2f> framePoints, courtPoints;
 cv::Point2f framePoint, courtPoint;
+
+void markClickedPoint(cv::Mat& image, const size_t points, int x, int y)
+{
+	cv::circle(image, cv::Point(x, y), 1, black, 5);
+	cv::circle(image, cv::Point(x, y), 1, green, 2);
+	cv::putText(image, std::to_string(points), cv::Point(x - 5, y - 10), 1, 1, black, 5);
+	cv::putText(image, std::to_string(points), cv::Point(x - 5, y - 10), 1, 1, green, 2);
+}
 
 void onMouseClickFrame(int event, int x, int y, int flags, void* param)
 {
 	if (framePoints.size() < maxImagePoints && event == cv::EVENT_FLAG_LBUTTON)
 	{
 		framePoints.push_back(cv::Point2f(x, y));
+		cv::Mat& tempFrame = *((cv::Mat*)(param));
+		markClickedPoint(tempFrame, framePoints.size(), x, y);
+
 		std::cout << "Frame point " << x << "," << y << " captured\n";
+		cv::imshow(frameWindow, tempFrame);
 	}
 	else if (framePoints.size() == maxImagePoints)
 	{
@@ -34,7 +49,11 @@ void onMouseClickCourt(int event, int x, int y, int flags, void* param)
 	if (courtPoints.size() < maxImagePoints && event == cv::EVENT_FLAG_LBUTTON)
 	{
 		courtPoints.push_back(cv::Point2f(x, y));
+		cv::Mat& tempCourt = *((cv::Mat*)(param));
+		markClickedPoint(tempCourt, courtPoints.size(), x, y);
+
 		std::cout << "Court point " << x << "," << y << " captured\n";
+		cv::imshow(courtWindow, tempCourt);
 	}
 	else if (courtPoints.size() == maxImagePoints)
 	{
@@ -74,10 +93,10 @@ int main(int argc, char** argv)
 
 	// get points of court
 	cv::namedWindow(courtWindow);
-	cv::setMouseCallback(courtWindow, onMouseClickCourt);
 	cv::Mat tempCourt = court.clone();
 	cv::putText(tempCourt, "Click court points", cv::Point(0, 25), 1, 2, cv::Scalar(0, 255, 0), 2);
 	cv::imshow(courtWindow, tempCourt);
+	cv::setMouseCallback(courtWindow, onMouseClickCourt, &tempCourt);
 
 	// get points of frame
 	cv::Mat intrinsics, distortion, undistortedFrame;
@@ -89,12 +108,12 @@ int main(int argc, char** argv)
 
 	cv::resize(undistortedFrame, frame, cv::Size(800, 600));
 	cv::namedWindow(frameWindow);
-	cv::setMouseCallback(frameWindow, onMouseClickFrame);
 	cv::resize(undistortedFrame, frame, cv::Size(800, 600));
 
 	cv::Mat tempFrame = frame.clone();
 	cv::putText(tempFrame, "Click frame points", cv::Point(0, 25), 1, 2, cv::Scalar(0, 255, 0), 2);
 	cv::imshow(frameWindow, tempFrame);
+	cv::setMouseCallback(frameWindow, onMouseClickFrame, &tempFrame);
 
 	cv::waitKey();
 	cv::destroyWindow(courtWindow);
