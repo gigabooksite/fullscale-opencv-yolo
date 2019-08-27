@@ -6,6 +6,9 @@
 
 extern std::atomic<bool> quit;
 
+const size_t VReader::MAX_QUEUE_SIZE = 1000;
+const int VReader::SKEW_ANGLE = 8;
+
 VReader::VReader(MatQueue& mat, const cv::String& inFile1, const cv::String& inFile2) : _frames(mat)
 {
 	_cap1.open(inFile1);
@@ -53,18 +56,24 @@ void VReader::operator()()
 				std::cout << "ERROR reading frame1" << std::endl;
 				break;
 			}
-			frames.push_back(frame.clone());
 		}
 
 		if (_cap2.isOpened())
 		{
+			cv::Mat imgRotated;
+			//temporary
+			cv::Mat matRotation = cv::getRotationMatrix2D(cv::Point(frame.rows/2, frame.cols/2), SKEW_ANGLE, 1);
+			cv::warpAffine(frame, imgRotated, matRotation, frame.size());
+			frames.push_back(imgRotated.clone());
 			if ((_cap2.read(frame) == false) || (frame.empty()))
 			{
 				std::cout << "ERROR reading frame2" << std::endl;
 			}
 			else
 			{
-				frames.push_back(frame.clone());
+				matRotation = cv::getRotationMatrix2D(cv::Point(frame.rows / 2, frame.cols / 2), SKEW_ANGLE * -1, 1);
+				cv::warpAffine(frame, imgRotated, matRotation, frame.size());
+				frames.push_back(imgRotated.clone());
 
 				if (!stitcher.isCalibrated())
 				{

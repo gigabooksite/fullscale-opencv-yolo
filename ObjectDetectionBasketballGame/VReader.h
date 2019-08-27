@@ -18,7 +18,8 @@ private:
 	cv::VideoCapture _cap2;
 	CourtStitcher stitcher;
 
-	const size_t MAX_QUEUE_SIZE = 1000;
+	static const size_t MAX_QUEUE_SIZE;
+	static const int SKEW_ANGLE;
 };
 
 #endif
