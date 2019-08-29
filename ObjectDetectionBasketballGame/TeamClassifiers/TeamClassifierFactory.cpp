@@ -4,18 +4,11 @@
 
 using namespace TeamClassify;
 
-ITeamClassifier* TeamClassifierFactory::CreateTeamClassifier(const std::string& type)
+ITeamClassifier* TeamClassifierFactory::CreateTeamClassifier(const TeamClassifierTypes type)
 {
-	if (type == "dummy")
+	switch (type)
 	{
-		return new DummyTeamClassifier();
-	}
-	else if (type == "teamclassifier")
-	{
-		return new TeamClassifier();
-	}
-	else
-	{
-		return nullptr;
+		case TeamClassifierTypes::TeamClassifier:	return new TeamClassifier();
+		case TeamClassifierTypes::Dummy:			return new DummyTeamClassifier();
 	}
 }

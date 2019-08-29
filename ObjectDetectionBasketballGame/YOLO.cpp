@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
 	cv::String source2 = "";
 #endif
 	
-	ITeamClassifier* teamClassifer = TeamClassifierFactory::CreateTeamClassifier("dummy");
+	ITeamClassifier* teamClassifer = TeamClassifierFactory::CreateTeamClassifier(TeamClassifierTypes::Dummy);
 	VReader reader(capture, source1, source2);
 	VProcessor processor(capture, display, teamClassifer);
 	VWriter writer(display, "output.avi");
