@@ -14,6 +14,9 @@ void ObjectTracker::initialize(const std::vector<cv::Rect>& bboxes, cv::Mat& fra
 {
 	for (auto bbox : bboxes)
 	{
+		// csrt - slow, good
+		// kcf - average, average
+		// mosse - fast, bad
 		_multiTracker->add(cv::TrackerMOSSE::create(), frame, bbox);
 	}
 }

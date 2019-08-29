@@ -63,8 +63,6 @@ void VProcessor::operator()()
 	MyMat myFrame;
 	do
 	{
-		std::cout << "inFrames:  " << _inFrames.size() << "\n";
-		std::cout << "outFrames: " << _outFrames.size() << "\n";
 		myFrame = _inFrames.pop();
 		frame = myFrame.mat;
 		if (myFrame.width == 0)
