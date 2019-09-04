@@ -99,10 +99,10 @@ void CourtStitcher::calibrate(const std::vector<cv::Mat>& frames)
 	vector<int> indices = leaveBiggestComponent(features, pairwise_matches, conf_thresh);
 	vector<Mat> img_subset;
 	vector<Size> full_img_sizes_subset;
-	for (size_t i = 0; i < indices.size(); ++i)
+	for (const auto& x : indices)
 	{
-		img_subset.push_back(images[indices[i]]);
-		full_img_sizes_subset.push_back(full_img_sizes[indices[i]]);
+		img_subset.push_back(images[x]);
+		full_img_sizes_subset.push_back(full_img_sizes[x]);
 	}
 	images = img_subset;
 	full_img_sizes = full_img_sizes_subset;
@@ -116,11 +116,11 @@ void CourtStitcher::calibrate(const std::vector<cv::Mat>& frames)
 		return;
 	}
 
-	for (size_t i = 0; i < cameras.size(); ++i)
+	for (auto& cam : cameras)
 	{
 		Mat R;
-		cameras[i].R.convertTo(R, CV_32F);
-		cameras[i].R = R;
+		cam.R.convertTo(R, CV_32F);
+		cam.R = R;
 	}
 
 	Ptr<detail::BundleAdjusterBase> adjuster;
@@ -142,9 +142,9 @@ void CourtStitcher::calibrate(const std::vector<cv::Mat>& frames)
 
 	// Find median focal length
 	vector<double> focals;
-	for (size_t i = 0; i < cameras.size(); ++i)
+	for (const auto& cam : cameras)
 	{
-		focals.push_back(cameras[i].focal);
+		focals.push_back(cam.focal);
 	}
 
 	sort(focals.begin(), focals.end());
@@ -154,14 +154,15 @@ void CourtStitcher::calibrate(const std::vector<cv::Mat>& frames)
 		warped_image_scale = static_cast<float>(focals[focals.size() / 2 - 1] + focals[focals.size() / 2]) * 0.5f;
 
 	vector<Mat> rmats;
-	for (size_t i = 0; i < cameras.size(); ++i)
+	for(const auto& cam : cameras)
 	{
-		rmats.push_back(cameras[i].R.clone());
+		rmats.push_back(cam.R.clone());
 	}
 	waveCorrect(rmats, detail::WAVE_CORRECT_HORIZ);
-	for (size_t i = 0; i < cameras.size(); ++i)
+	i = 0;
+	for (auto& cam : cameras)
 	{
-		cameras[i].R = rmats[i];
+		cam.R = rmats[i++];
 	}
 
 	// Warp images (auxiliary)
@@ -350,7 +351,7 @@ Mat CourtStitcher::stitch(const std::vector<cv::Mat>& frames)
 	return result;
 }
 
-bool CourtStitcher::isCalibrated()
+bool CourtStitcher::isCalibrated() const
 {
 	return calibrated;
 }

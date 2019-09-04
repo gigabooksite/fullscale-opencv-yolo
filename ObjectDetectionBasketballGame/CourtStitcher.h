@@ -16,7 +16,7 @@ public:
 
 	void calibrate(const std::vector<cv::Mat>& frames);
 	cv::Mat stitch(const std::vector<cv::Mat>& frames);
-	bool isCalibrated();
+	bool isCalibrated() const;
 private:
 	bool calibrated;
 	float warped_image_scale;

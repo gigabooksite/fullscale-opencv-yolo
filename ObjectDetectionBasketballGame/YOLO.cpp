@@ -28,8 +28,11 @@ int main(int argc, char* argv[])
 	cv::String source1 = "yolo/XWtjl9fI9pY_clip_11.mp4"; 
 	cv::String source2 = "";
 #endif
-	
+#ifdef TEAM_CLASSIFY_ENABLED
+	ITeamClassifier* teamClassifer = TeamClassifierFactory::CreateTeamClassifier(TeamClassifierTypes::TeamClassifier);
+#else
 	ITeamClassifier* teamClassifer = TeamClassifierFactory::CreateTeamClassifier(TeamClassifierTypes::Dummy);
+#endif
 	VReader reader(capture, source1, source2);
 	VProcessor processor(capture, display, teamClassifer);
 	VWriter writer(display, "output.avi");

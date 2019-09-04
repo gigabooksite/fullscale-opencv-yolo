@@ -129,39 +129,38 @@ void VProcessor::postprocess(cv::Mat& frame, const std::vector<cv::Mat>& outs, c
 
 	if (lastLayer->type.compare("Region") == 0)
 	{
-		for (size_t i = 0; i < outs.size(); ++i)
+		for(auto& out : outs)
 		{
-			// Scan through all the bounding boxes output from the network and keep only the
-			// ones with high confidence scores. Assign the box's class label as the class
-			// with the highest score for the box.
-			float* data = (float*)outs[i].data;
-			for (int j = 0; j < outs[i].rows; ++j, data += outs[i].cols)
-			{
-				cv::Mat scores = outs[i].row(j).colRange(5, outs[i].cols);
-				cv::Point classIdPoint;
-				double confidence;
-				// Get the value and location of the maximum score
-				minMaxLoc(scores, 0, &confidence, 0, &classIdPoint);
-				if (confidence > m_confThreshold)
+				// Scan through all the bounding boxes output from the network and keep only the
+				// ones with high confidence scores. Assign the box's class label as the class
+				// with the highest score for the box.
+				float* data = (float*)out.data;
+				for (int j = 0; j < out.rows; ++j, data += out.cols)
 				{
-					int centerX = (int)(data[0] * frame.cols);
-					int centerY = (int)(data[1] * frame.rows);
-					int width = (int)(data[2] * frame.cols);
-					int height = (int)(data[3] * frame.rows);
-					int left = centerX - width / 2;
-					int top = centerY - height / 2;
+					cv::Mat scores = out.row(j).colRange(5, out.cols);
+					cv::Point classIdPoint;
+					double confidence;
+					// Get the value and location of the maximum score
+					minMaxLoc(scores, 0, &confidence, 0, &classIdPoint);
+					if (confidence > m_confThreshold)
+					{
+						int centerX = (int)(data[0] * frame.cols);
+						int centerY = (int)(data[1] * frame.rows);
+						int width = (int)(data[2] * frame.cols);
+						int height = (int)(data[3] * frame.rows);
+						int left = centerX - width / 2;
+						int top = centerY - height / 2;
 
-					_classIds.push_back(classIdPoint.x);
-					_confidences.push_back((float)confidence);
-					_boxes.push_back(cv::Rect(left, top, width, height));
+						_classIds.push_back(classIdPoint.x);
+						_confidences.push_back((float)confidence);
+						_boxes.push_back(cv::Rect(left, top, width, height));
+					}
 				}
-			}
 		}
 	}
 	else if (lastLayer->type.compare("DetectionOutput") == 0)
 	{
 		std::ostringstream ss;
-		//cv::Mat detectionMat(outs[i].size[2], outs[i].size[3], CV_32F, outs[i].ptr<float>());
 		cv::Mat detection = outs.front();
 		cv::Mat detectionMat(detection.size[2], detection.size[3], CV_32F, detection.ptr<float>());
 

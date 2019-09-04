@@ -44,7 +44,7 @@ bool CourtDetect::setCourt(const std::string courtFile)
 	return true;
 }
 
-cv::Mat CourtDetect::getCourt()
+cv::Mat CourtDetect::getCourt() const
 {
 	return court;
 }
@@ -61,7 +61,7 @@ bool CourtDetect::setSettingsFile(const std::string settingsFile)
 	return true;
 }
 
-void CourtDetect::projectPosition(cv::Mat& court, cv::Point2f position, cv::Scalar teamColor)
+void CourtDetect::projectPosition(cv::Mat& court, cv::Point2f position, cv::Scalar teamColor) const
 {
 	cv::Mat homography = findHomography(framePoints, courtPoints, cv::RANSAC);
 
@@ -125,7 +125,7 @@ void CourtDetect::calibratePoints(const std::string& courtImage, const cv::Mat& 
 	calibrated = true;
 }
 
-bool CourtDetect::isCalibrated()
+bool CourtDetect::isCalibrated() const
 {
 	return calibrated;
 }
@@ -144,7 +144,7 @@ void CourtDetect::onMouseClickFrame(int event, int x, int y, int flags, void* pa
 
 	if (data->p->framePoints.size() < maxImagePoints && event == cv::EVENT_FLAG_LBUTTON)
 	{
-		data->p->framePoints.push_back(cv::Point2f(x, y));
+		data->p->framePoints.push_back(cv::Point2f((float)x, (float)y));
 		cv::Mat& tempFrame = *(data->mat);
 		data->p->markClickedPoint(tempFrame, data->p->framePoints.size(), x, y);
 
@@ -164,7 +164,7 @@ void CourtDetect::onMouseClickCourt(int event, int x, int y, int flags, void* pa
 
 	if (data->p->courtPoints.size() < maxImagePoints && event == cv::EVENT_FLAG_LBUTTON)
 	{
-		data->p->courtPoints.push_back(cv::Point2f(x, y));
+		data->p->courtPoints.push_back(cv::Point2f((float)x, (float)y));
 		cv::Mat& tempCourt = *(data->mat);
 		data->p->markClickedPoint(tempCourt, data->p->courtPoints.size(), x, y);
 

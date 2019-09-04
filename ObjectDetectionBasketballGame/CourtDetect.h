@@ -12,11 +12,11 @@ public:
 	virtual ~CourtDetect();
 
 	bool setCourt(const std::string courtFile);
-	cv::Mat getCourt();
+	cv::Mat getCourt() const;
 	bool setSettingsFile(const std::string settingsFile);
-	void projectPosition(cv::Mat& court, cv::Point2f position, cv::Scalar teamColor);
+	void projectPosition(cv::Mat& court, cv::Point2f position, cv::Scalar teamColor) const;
 	void calibratePoints(const std::string& courtImage, const cv::Mat& frame);
-	bool isCalibrated();
+	bool isCalibrated() const;
 private:
 	std::string winName;
 	bool calibrated;

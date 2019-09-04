@@ -6,9 +6,18 @@ using namespace TeamClassify;
 
 ITeamClassifier* TeamClassifierFactory::CreateTeamClassifier(const TeamClassifierTypes type)
 {
+	ITeamClassifier* ptr = nullptr;
 	switch (type)
 	{
-		case TeamClassifierTypes::TeamClassifier:	return new TeamClassifier();
-		case TeamClassifierTypes::Dummy:			return new DummyTeamClassifier();
+		case TeamClassifierTypes::TeamClassifier:	
+			ptr = new TeamClassifier();
+			break;
+		case TeamClassifierTypes::Dummy:
+			//break; intentional fall-through
+		default:
+			ptr = new DummyTeamClassifier();
+			break;
 	}
+
+	return ptr;
 }

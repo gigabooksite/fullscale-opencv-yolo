@@ -51,6 +51,9 @@
     <ClCompile Include="..\..\ObjectDetectionBasketballGame\TeamClassifiers\TeamClassifierFactory.cpp">
       <Filter>Source Files\Team Classifiers</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\ObjectDetectionBasketballGame\CourtStitcher.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ObjectDetectionBasketballGame\CourtDetect.h">
@@ -85,6 +88,9 @@
     </ClInclude>
     <ClInclude Include="..\..\ObjectDetectionBasketballGame\TeamClassifiers\TeamClassifierFactory.h">
       <Filter>Header Files\Team Classifiers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ObjectDetectionBasketballGame\CourtStitcher.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

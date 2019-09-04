@@ -71,13 +71,13 @@ int TeamClassifier::ProcessFrame(FrameProcParams* params)
 			// Split players, in current frame, into two teams based on color.
 			cv::Mat playerColors = cv::Mat::zeros((int)frameCtxt.playerBoxPropIndices.size(), 3, CV_8UC1);
 			uchar* dest = playerColors.data;
-			for (size_t i = 0; i < frameCtxt.boxProps.size(); ++i)
+			for (auto& boxProp : frameCtxt.boxProps)
 			{
-				if (frameCtxt.boxProps[i].isPlayer)
+				if (boxProp.isPlayer)
 				{
-					*dest++ = (uchar)frameCtxt.boxProps[i].genBaseColor[0]; // B
-					*dest++ = (uchar)frameCtxt.boxProps[i].genBaseColor[1]; // G
-					*dest++ = (uchar)frameCtxt.boxProps[i].genBaseColor[2]; // R					
+					*dest++ = (uchar)boxProp.genBaseColor[0]; // B
+					*dest++ = (uchar)boxProp.genBaseColor[1]; // G
+					*dest++ = (uchar)boxProp.genBaseColor[2]; // R					
 				}
 			}			
 			cv::Mat labels;
@@ -145,9 +145,9 @@ int TeamClassifier::ProcessFrame(FrameProcParams* params)
 		// Save teams for this frame.
 		lastTeams[0].props = teamProps[0]; lastTeams[0].playerBoxNmsIndices.clear();
 		lastTeams[1].props = teamProps[1]; lastTeams[1].playerBoxNmsIndices.clear();
-		for (int i = 0; i < frameCtxt.playerBoxPropIndices.size(); i++)
+		for (const auto& playerBoxPropIndex : frameCtxt.playerBoxPropIndices)
 		{
-			BoxProps* props = &frameCtxt.boxProps[frameCtxt.playerBoxPropIndices[i]];
+			BoxProps* props = &frameCtxt.boxProps[playerBoxPropIndex];
 			lastTeams[props->teamIdx].playerBoxNmsIndices.push_back(props->boxNmsIdx);
 		}
 
